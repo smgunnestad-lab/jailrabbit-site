@@ -1,52 +1,234 @@
-/* GRUNNSTIL */
+/* =========================================
+   GRUNNSTIL (Base Styles)
+   ========================================= */
 body {
   font-family: system-ui, sans-serif;
   background: #0f1220;
   color: #f5f5f5;
   margin: 0;
-  padding-top: 120px; /* Plass til navbar */
+  padding: 0;
+  padding-top: 120px; /* Mer plass på toppen så ingenting gjemmer seg bak menyen */
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100vh; 
 }
 
-main { text-align: center; width: 100%; max-width: 900px; padding: 0 20px; box-sizing: border-box; }
+main {
+  text-align: center;
+  width: 100%;
+  max-width: 900px; 
+  padding: 0 20px;
+  box-sizing: border-box;
+}
 
-/* NAVBAR - Fikset for å ikke kutte tekst */
+/* =========================================
+   NAVIGASJON (Navbar) - FIKSET FOR KUTTING
+   ========================================= */
 .navbar {
-  position: fixed; top: 0; left: 0; width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   background: #11152a;
   display: flex;
-  flex-wrap: wrap; /* LØSNING: Bryter til ny linje hvis det blir trangt */
+  flex-wrap: wrap; /* LØSNINGEN: Tillater menyen å brytes over flere linjer på små skjermer */
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  box-sizing: border-box;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  z-index: 1000;
+  box-sizing: border-box; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4); 
+  z-index: 1000; 
 }
 
-.logo { font-weight: bold; font-size: 1.2rem; margin-right: 1rem; }
+.logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
 
 .nav-links {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  flex-wrap: wrap; /* Tillater lenkene å tilpasse seg */
+  gap: 1.2rem;
+  justify-content: center;
 }
 
-.nav-links a { color: white; text-decoration: none; font-weight: 500; }
-.nav-links a:hover { color: #7c7cff; }
+.nav-links a, .navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out; 
+}
 
-/* YEARBOOK-GRID */
+.nav-links a:hover, .navbar a:hover {
+  color: #7c7cff;
+}
+
+/* =========================================
+   KNAPPER (Buttons)
+   ========================================= */
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  align-items: center;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.85rem 1.5rem;
+  background: #7c7cff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+  width: 100%;
+  max-width: 300px; 
+  box-sizing: border-box;
+  transition: background 0.2s ease, transform 0.1s ease; 
+}
+
+.btn:hover {
+  background: #5b5bcc;
+  transform: scale(1.02); 
+}
+
+.back-btn {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: auto;
+  z-index: 1001;
+}
+
+/* =========================================
+   BILDE/VIDEO-KARUSELL (Slider)
+   ========================================= */
+.carousel-section {
+  margin-top: 4rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #161a33;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.6s ease-in-out; /* Den fine skli-animasjonen */
+}
+
+.carousel-slide {
+  min-width: 100%; /* Hvert bilde tar hele bredden */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel-slide img, .carousel-slide video {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+}
+.carousel-btn:hover { background: rgba(124, 124, 255, 0.8); }
+.carousel-btn.prev { left: 10px; }
+.carousel-btn.next { right: 10px; }
+
+/* =========================================
+   STREAMERS DETALJSIDE (streamers.html)
+   ========================================= */
+.streamer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.streamer-card-detailed {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: #161a33;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.streamer-card-detailed img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #7c7cff;
+}
+
+.streamer-info h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.streamer-info p {
+  color: #aaa;
+  margin-bottom: 1rem;
+}
+
+.streamer-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.streamer-link-btn {
+  background: #2a2d3e;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.streamer-link-btn:hover { background: #7c7cff; }
+
+@media (max-width: 600px) {
+  .streamer-card-detailed {
+    flex-direction: column;
+    text-align: center;
+  }
+  .streamer-links { justify-content: center; }
+}
+/* Yearbook Grid */
 .yearbook-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2rem;
   margin-top: 3rem;
-  width: 100%;
 }
 
+/* Kortet med polaroid-look */
 .yearbook-card {
   background: #fff;
   padding: 15px;
@@ -54,20 +236,33 @@ main { text-align: center; width: 100%; max-width: 900px; padding: 0 20px; box-s
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   cursor: pointer;
   transition: transform 0.3s ease;
+  position: relative;
   text-align: center;
   color: #333;
 }
 
 .yearbook-card:hover { transform: scale(1.05); }
-.yearbook-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 2px; }
-.yearbook-card p { font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-top: 10px; }
 
-/* OVERLAY */
+.yearbook-card img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.yearbook-card p { font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+
+/* Mørk Overlay (Lightbox) */
 .overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.85);
   display: none; justify-content: center; align-items: center;
   z-index: 2000;
 }
+
 .overlay.active { display: flex; }
-.overlay video { width: 80%; max-width: 600px; border-radius: 8px; border: 4px solid white; }
+
+.overlay video {
+  width: 80%; max-width: 600px;
+  border-radius: 8px; border: 4px solid white;
+}

@@ -1,100 +1,180 @@
 <!DOCTYPE html>
-<html lang="no">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Whiteboard - JailRabbit</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
-    /* Spesifikk stil for whiteboardet */
-    .whiteboard-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 2rem;
+    /* Fjerner alle marger og gjør at siden ikke kan rulles (scrolles) */
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; 
+      background-color: #ffffff; /* Hvit bakgrunn for Whiteboard */
+      font-family: system-ui, sans-serif;
     }
-    
-    .tools {
-      margin-bottom: 1rem;
-      display: flex;
-      gap: 1rem;
+
+    /* En usynlig sone på toppen av skjermen som fanger opp musen din */
+    .navbar-hover-zone {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px; /* Hvor langt ned musen må før menyen spretter frem */
+      z-index: 100;
+    }
+
+    /* Selve menyen, som starter "utenfor" toppen av skjermen */
+    .navbar {
+      position: absolute;
+      top: -100px; /* Skjult som standard */
+      left: 0;
+      width: 100%;
       background: #11152a;
-      padding: 10px 20px;
+      color: white;
+      display: flex;
+      justify-content: center; /* Sentrerer alt i menyen */
+      align-items: center;
+      padding: 15px 2rem;
+      box-sizing: border-box;
+      transition: top 0.3s ease-in-out; /* Myk animasjon nedover */
+      gap: 4rem; /* Avstand mellom navigasjon og verktøy */
+    }
+
+    /* Når musen er i den usynlige sonen (eller over selve menyen), dra menyen ned */
+    .navbar-hover-zone:hover .navbar,
+    .navbar:hover {
+      top: 0;
+    }
+
+    /* Navigasjonslinkene */
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Tegneverktøyene i midten */
+    .tools {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: #0f1220;
+      padding: 8px 20px;
       border-radius: 8px;
     }
 
+    .tools label {
+      font-size: 0.9rem;
+      color: #f5f5f5;
+    }
+    
+    .btn-clear {
+      background: #7c7cff;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-clear:hover {
+      background: #5b5bcc;
+    }
+
+    /* Lerretet du tegner på */
     canvas {
-      background: white;
-      border-radius: 8px;
-      cursor: crosshair;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      display: block;
+      cursor: crosshair; /* Gjør musepekeren om til et sikte */
     }
   </style>
 </head>
 <body>
-  <header class="navbar">
-    <div class="logo">🐇 JailRabbit</div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="trips.html">Trips</a>
-      <a href="events.html">Events</a>
-      <a href="whiteboard.html">Whiteboard</a>
-    </nav>
-  </header>
 
-  <main>
-    <h1>🖌️ Solo Whiteboard</h1>
-    <p>Test version, only local on your machine for now.</p>
-    
-    <div class="whiteboard-container">
+  <!-- Hover-sonen på toppen av skjermen -->
+  <div class="navbar-hover-zone">
+    <header class="navbar">
+      <!-- Lenkene mot midten -->
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="trips.html">Trips</a>
+        <a href="events.html">Events</a>
+        <a href="whiteboard.html">Whiteboard</a>
+      </div>
+
+      <!-- Verktøyene midt i navbar -->
       <div class="tools">
-        <label for="colorPicker">Farge:</label>
+        <label for="colorPicker">Color:</label>
         <input type="color" id="colorPicker" value="#000000">
         
-        <label for="brushSize">Størrelse:</label>
+        <label for="brushSize">Size:</label>
         <input type="range" id="brushSize" min="1" max="20" value="5">
         
-        <button class="btn" id="clearBtn" style="margin: 0; padding: 5px 15px;">Tøm brett</button>
+        <button class="btn-clear" id="clearBtn">Clear Board</button>
       </div>
-      
-      <!-- Selve tegnebrettet -->
-      <canvas id="board" width="800" height="500"></canvas>
-    </div>
-  </main>
+    </header>
+  </div>
 
-  <!-- JavaScript for å få tegnebrettet til å fungere -->
+  <!-- Hele siden er dette lerretet -->
+  <canvas id="board"></canvas>
+
   <script>
     const canvas = document.getElementById('board');
     const ctx = canvas.getContext('2d');
     
+    // Funksjon for å gjøre lerretet like stort som nettleservinduet
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas(); // Kjør umiddelbart når siden lastes
+    
     let isDrawing = false;
     
-    // Hent verktøy
     const colorPicker = document.getElementById('colorPicker');
     const brushSize = document.getElementById('brushSize');
     const clearBtn = document.getElementById('clearBtn');
 
-    // Start tegning
+    // Start tegning (når du trykker musen ned)
     canvas.addEventListener('mousedown', (e) => {
       isDrawing = true;
       ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
+      ctx.moveTo(e.clientX, e.clientY);
     });
 
-    // Tegn mens musen beveger seg
+    // Tegn (når du drar musen)
     canvas.addEventListener('mousemove', (e) => {
       if (!isDrawing) return;
-      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.lineTo(e.clientX, e.clientY);
       ctx.strokeStyle = colorPicker.value;
       ctx.lineWidth = brushSize.value;
-      ctx.lineCap = 'round';
+      ctx.lineCap = 'round'; // Gjør streken rund i kantene
+      ctx.lineJoin = 'round'; // Gjør hjørnene myke
       ctx.stroke();
     });
 
-    // Stopp tegning
+    // Stopp tegning (når du slipper musen)
     canvas.addEventListener('mouseup', () => {
       isDrawing = false;
     });
     
+    // Sikkerhet: Stopp tegning hvis musen går utenfor skjermen
+    canvas.addEventListener('mouseleave', () => {
+      isDrawing = false;
+    });
+
     // Tøm brettet
     clearBtn.addEventListener('click', () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);

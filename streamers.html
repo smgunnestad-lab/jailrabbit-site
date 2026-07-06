@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Streamers</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="closeVideo()">
+    <video id="popupVideo" controls></video>
+  </div>
+
+  <header class="navbar">
+    <div class="logo">🐇 JailRabbit</div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="trips.html">Trips</a>
+      <a href="events.html">Events</a>
+      <a href="whiteboard.html">Whiteboard</a>
+      <a href="streamers.html">Streamers</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Streamer Yearbook</h1>
+    <p>The legends that built JailRabbit.</p>
+
+    <div class="yearbook-grid">
+      <!-- EKSEMPEL -->
+      <div class="yearbook-card" onmouseover="showVideo('video1.mp4')" onmouseout="closeVideo()">
+        <img src="https://via.placeholder.com/300" alt="Streamer">
+        <p>STREAMER NAME</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function showVideo(src) {
+      const o = document.getElementById('overlay');
+      const v = document.getElementById('popupVideo');
+      v.src = src;
+      o.classList.add('active');
+      v.play();
+    }
+    function closeVideo() {
+      const o = document.getElementById('overlay');
+      const v = document.getElementById('popupVideo');
+      o.classList.remove('active');
+      v.pause();
+    }
+  </script>
+</body>
+</html>

@@ -1,43 +1,64 @@
 <!DOCTYPE html>
-<html lang="no">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>JailRabbit</title>
+  <title>JailRabbit - Home</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header class="navbar">
-  <div class="logo">🐇 JailRabbit</div>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="trips.html">Trips</a>
-    <a href="events.html">Events</a>
-  </nav>
-</header>
+  
+  <header class="navbar">
+    <div class="logo">🐇 JailRabbit</div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="trips.html">Trips</a>
+      <a href="events.html">Events</a>
+      <a href="whiteboard.html">Whiteboard</a>
+    </nav>
+  </header>
 
   <main>
-    <h1>🐇 JailRabbit</h1>
-    <p>The official website for JailRabbit.</p>
+    <div class="hero-section">
+      <h1>🐇 JailRabbit</h1>
+      <p>The official website for the JailRabbit community.</p>
 
-<div class="buttons">
-  <a class="btn" href="https://discord.gg/jailrabbit">
-    Join the discord community
-  </a>
+      <div class="buttons">
+        <a class="btn" href="https://discord.gg/jailrabbit" target="_blank">Join the Discord community</a>
+        <a class="btn" href="https://jailrabbittravels.com/" target="_blank">Trip planning</a>
+        <a class="btn" href="events.html">Events</a>
+      </div>
+    </div>
 
-  <a class="btn" href="https://jailrabbittravels.com/">
-    Need help planning a trip
-  </a>
+    <!-- HALL OF FAME SEKSJON -->
+    <section class="hall-of-fame">
+      <h2>🏆 Hall of Fame - Streamers</h2>
+      <p class="hof-desc">Click on the images to check out the legends of the JailRabbit community!</p>
+      
+      <div class="streamer-grid">
+        
+        <!-- Streamer 1 -->
+        <a href="https://twitch.tv/ditt_streamernavn" target="_blank" class="streamer-card">
+          <img src="https://via.placeholder.com/150" alt="Streamer 1" />
+          <h3>StreamerNavn 1</h3>
+        </a>
 
-  <a class="btn" href="events.html">
-    Events
-  </a>
-</div>
+        <!-- Streamer 2 -->
+        <a href="https://youtube.com/ditt_streamernavn" target="_blank" class="streamer-card">
+          <img src="https://via.placeholder.com/150" alt="Streamer 2" />
+          <h3>StreamerNavn 2</h3>
+        </a>
 
+        <!-- Streamer 3 -->
+        <a href="https://twitch.tv/ditt_streamernavn" target="_blank" class="streamer-card">
+          <img src="https://via.placeholder.com/150" alt="Streamer 3" />
+          <h3>StreamerNavn 3</h3>
+        </a>
 
+      </div>
+    </section>
 
-    <p class="small">
-      Under development – more to come.
-    </p>
+    <p class="small">Under development – more to come.</p>
   </main>
+
 </body>
 </html>

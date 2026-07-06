@@ -4,82 +4,122 @@
   <meta charset="UTF-8" />
   <title>Whiteboard - JailRabbit</title>
   <style>
-    /* Fjerner alle marger og gjør at siden ikke kan rulles (scrolles) */
+    /* Fjerner marger og aktiverer rutenett-bakgrunnen */
     body, html {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
       overflow: hidden; 
-      background-color: #ffffff; /* Hvit bakgrunn for Whiteboard */
+      background-color: #f8f9fa;
       font-family: system-ui, sans-serif;
+      /* Lager det gjennomsiktige rutenettet */
+      background-image: 
+        linear-gradient(rgba(200, 200, 200, 0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200, 200, 200, 0.3) 1px, transparent 1px);
+      background-size: 25px 25px; /* Størrelse på rutene */
     }
 
-    /* En usynlig sone på toppen av skjermen som fanger opp musen din */
+    /* Container for lerretet for å støtte zooming */
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform-origin: center center;
+      transition: transform 0.2s ease-out;
+    }
+
+    canvas {
+      background: transparent;
+      cursor: crosshair;
+    }
+
+    /* Smartere Navbar-hover-sone for å forhindre at den forsvinner for fort */
     .navbar-hover-zone {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      height: 60px; /* Hvor langt ned musen må før menyen spretter frem */
+      height: 80px;
       z-index: 100;
     }
 
-    /* Selve menyen, som starter "utenfor" toppen av skjermen */
+    /* Selve menyen */
     .navbar {
       position: absolute;
-      top: -100px; /* Skjult som standard */
+      top: -120px; /* Skjult som standard */
       left: 0;
       width: 100%;
       background: #11152a;
       color: white;
       display: flex;
-      justify-content: center; /* Sentrerer alt i menyen */
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      padding: 15px 2rem;
+      padding: 10px 2rem;
       box-sizing: border-box;
-      transition: top 0.3s ease-in-out; /* Myk animasjon nedover */
-      gap: 4rem; /* Avstand mellom navigasjon og verktøy */
+      transition: top 0.3s ease-in-out;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
 
-    /* Når musen er i den usynlige sonen (eller over selve menyen), dra menyen ned */
+    /* Holder menyen åpen lengre */
     .navbar-hover-zone:hover .navbar,
-    .navbar:hover {
+    .navbar:hover,
+    .navbar:focus-within {
       top: 0;
     }
 
-    /* Navigasjonslinkene */
     .nav-links {
       display: flex;
-      gap: 1.5rem;
+      gap: 2rem;
+      margin-bottom: 10px;
     }
 
     .nav-links a {
-      color: white;
+      color: #7c7cff;
       text-decoration: none;
-      font-weight: 500;
+      font-weight: 600;
+      letter-spacing: 1px;
     }
 
     .nav-links a:hover {
-      text-decoration: underline;
+      color: white;
     }
 
-    /* Tegneverktøyene i midten */
+    /* Verktøylinjen */
     .tools {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.5rem;
       background: #0f1220;
-      padding: 8px 20px;
+      padding: 10px 25px;
       border-radius: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tool-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .tools label {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #f5f5f5;
     }
     
-    .btn-clear {
+    .tools input, .tools select {
+      background: #2a2d3e;
+      color: white;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 4px;
+    }
+
+    .btn {
       background: #7c7cff;
       color: white;
       border: none;
@@ -87,97 +127,228 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+      transition: background 0.2s;
     }
 
-    .btn-clear:hover {
-      background: #5b5bcc;
-    }
-
-    /* Lerretet du tegner på */
-    canvas {
-      display: block;
-      cursor: crosshair; /* Gjør musepekeren om til et sikte */
-    }
+    .btn:hover { background: #5b5bcc; }
+    .btn-danger { background: #ff4c4c; }
+    .btn-danger:hover { background: #cc0000; }
   </style>
 </head>
 <body>
 
-  <!-- Hover-sonen på toppen av skjermen -->
+  <!-- Toppmenyen som glir ned -->
   <div class="navbar-hover-zone">
     <header class="navbar">
-      <!-- Lenkene mot midten -->
+      
+      <!-- Sidenavigasjon midtsentrert -->
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="trips.html">Trips</a>
         <a href="events.html">Events</a>
-        <a href="whiteboard.html">Whiteboard</a>
+        <a href="whiteboard.html" style="color: white; border-bottom: 2px solid white;">Whiteboard</a>
       </div>
 
-      <!-- Verktøyene midt i navbar -->
+      <!-- Masse funksjoner og verktøy -->
       <div class="tools">
-        <label for="colorPicker">Color:</label>
-        <input type="color" id="colorPicker" value="#000000">
         
-        <label for="brushSize">Size:</label>
-        <input type="range" id="brushSize" min="1" max="20" value="5">
+        <div class="tool-group">
+          <label for="tool">Tool:</label>
+          <select id="tool">
+            <option value="pen">Pen</option>
+            <option value="line">Line</option>
+            <option value="rect">Rectangle</option>
+            <option value="circle">Circle</option>
+            <option value="eraser">Eraser</option>
+          </select>
+        </div>
+
+        <div class="tool-group">
+          <label title="Left Click">Primary:</label>
+          <input type="color" id="primaryColor" value="#000000">
+          
+          <label title="Right Click">Secondary:</label>
+          <input type="color" id="secondaryColor" value="#7c7cff">
+        </div>
+
+        <div class="tool-group">
+          <label for="brushSize">Size:</label>
+          <input type="range" id="brushSize" min="1" max="50" value="5">
+        </div>
         
-        <button class="btn-clear" id="clearBtn">Clear Board</button>
+        <div class="tool-group">
+          <button class="btn" id="zoomOutBtn">Zoom -</button>
+          <button class="btn" id="zoomInBtn">Zoom +</button>
+        </div>
+
+        <div class="tool-group">
+          <button class="btn" id="undoBtn">Undo (Ctrl+Z)</button>
+          <button class="btn btn-danger" id="clearBtn">Clear</button>
+        </div>
+
       </div>
     </header>
   </div>
 
-  <!-- Hele siden er dette lerretet -->
-  <canvas id="board"></canvas>
+  <!-- Lerretet pakkes inn i en container for zooming -->
+  <div id="canvas-container">
+    <canvas id="board"></canvas>
+  </div>
 
   <script>
     const canvas = document.getElementById('board');
     const ctx = canvas.getContext('2d');
+    const canvasContainer = document.getElementById('canvas-container');
     
-    // Funksjon for å gjøre lerretet like stort som nettleservinduet
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas(); // Kjør umiddelbart når siden lastes
+    // Verktøy-variabler
+    const toolSelect = document.getElementById('tool');
+    const primaryColor = document.getElementById('primaryColor');
+    const secondaryColor = document.getElementById('secondaryColor');
+    const brushSize = document.getElementById('brushSize');
     
     let isDrawing = false;
+    let startX, startY;
+    let currentScale = 1; // For zooming
     
-    const colorPicker = document.getElementById('colorPicker');
-    const brushSize = document.getElementById('brushSize');
-    const clearBtn = document.getElementById('clearBtn');
+    // Historikk for Undo-funksjonen
+    let historyArray = [];
+    let historyStep = -1;
 
-    // Start tegning (når du trykker musen ned)
+    // Sett canvas-størrelse til skjermstørrelse
+    function initCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        saveState(); // Lagre det blanke arket som første trinn i historikken
+    }
+    initCanvas();
+
+    // -- UTREGNING AV KOORDINATER MED ZOOM --
+    // Fordi vi kan zoome, må vi regne om hvor musen *faktisk* er på arket
+    function getMousePos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (e.clientX - rect.left) * (canvas.width / rect.width),
+        y: (e.clientY - rect.top) * (canvas.height / rect.height)
+      };
+    }
+
+    // -- TEGNE-LOGIKK --
+    
+    // Forhindre standard høyreklikk-meny på lerretet
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+
     canvas.addEventListener('mousedown', (e) => {
       isDrawing = true;
+      const pos = getMousePos(e);
+      startX = pos.x;
+      startY = pos.y;
+
       ctx.beginPath();
-      ctx.moveTo(e.clientX, e.clientY);
+      ctx.moveTo(startX, startY);
+      
+      // Bestem farge basert på hvilken musetast som trykkes (0 = Venstre, 2 = Høyre)
+      const currentColor = (e.button === 2) ? secondaryColor.value : primaryColor.value;
+      
+      ctx.strokeStyle = (toolSelect.value === 'eraser') ? 'white' : currentColor;
+      ctx.lineWidth = brushSize.value;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
     });
 
-    // Tegn (når du drar musen)
     canvas.addEventListener('mousemove', (e) => {
       if (!isDrawing) return;
-      ctx.lineTo(e.clientX, e.clientY);
-      ctx.strokeStyle = colorPicker.value;
-      ctx.lineWidth = brushSize.value;
-      ctx.lineCap = 'round'; // Gjør streken rund i kantene
-      ctx.lineJoin = 'round'; // Gjør hjørnene myke
-      ctx.stroke();
+      const pos = getMousePos(e);
+      const tool = toolSelect.value;
+
+      if (tool === 'pen' || tool === 'eraser') {
+        // Tegn kontinuerlig
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      } else {
+        // For figurer: Vi må tømme lerretet tilbake til forrige lagrede steg 
+        // før vi tegner figuren på nytt under musen (preview-effekt)
+        restoreState(historyStep);
+        ctx.beginPath();
+        
+        if (tool === 'line') {
+          ctx.moveTo(startX, startY);
+          ctx.lineTo(pos.x, pos.y);
+        } else if (tool === 'rect') {
+          const width = pos.x - startX;
+          const height = pos.y - startY;
+          ctx.rect(startX, startY, width, height);
+        } else if (tool === 'circle') {
+          const radius = Math.sqrt(Math.pow(pos.x - startX, 2) + Math.pow(pos.y - startY, 2));
+          ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+        }
+        ctx.stroke();
+      }
     });
 
-    // Stopp tegning (når du slipper musen)
     canvas.addEventListener('mouseup', () => {
-      isDrawing = false;
-    });
-    
-    // Sikkerhet: Stopp tegning hvis musen går utenfor skjermen
-    canvas.addEventListener('mouseleave', () => {
-      isDrawing = false;
+      if (isDrawing) {
+        isDrawing = false;
+        ctx.closePath();
+        saveState(); // Lagre bildet når du er ferdig med streken/figuren
+      }
     });
 
-    // Tøm brettet
-    clearBtn.addEventListener('click', () => {
+    canvas.addEventListener('mouseleave', () => {
+      if (isDrawing) {
+        isDrawing = false;
+        ctx.closePath();
+        saveState();
+      }
+    });
+
+    // -- UNDO OG HISTORIKK --
+    function saveState() {
+      // Hvis vi har "angret" tilbake og tegner noe nytt, slett fremtiden
+      if (historyStep < historyArray.length - 1) {
+        historyArray = historyArray.slice(0, historyStep + 1);
+      }
+      historyArray.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+      historyStep++;
+    }
+
+    function restoreState(index) {
+      if (index >= 0 && index < historyArray.length) {
+        ctx.putImageData(historyArray[index], 0, 0);
+      }
+    }
+
+    function undo() {
+      if (historyStep > 0) {
+        historyStep--;
+        restoreState(historyStep);
+      }
+    }
+
+    document.getElementById('undoBtn').addEventListener('click', undo);
+    
+    // Tastatur-snarvei for Undo (Ctrl + Z)
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'z') {
+        undo();
+      }
+    });
+
+    // -- KNAPPER (Tøm, Zoom) --
+    document.getElementById('clearBtn').addEventListener('click', () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      saveState(); // Å tømme brettet lagres også som et steg du kan angre på!
+    });
+
+    document.getElementById('zoomInBtn').addEventListener('click', () => {
+      currentScale += 0.2;
+      canvasContainer.style.transform = `scale(${currentScale})`;
+    });
+
+    document.getElementById('zoomOutBtn').addEventListener('click', () => {
+      if (currentScale > 0.4) {
+        currentScale -= 0.2;
+        canvasContainer.style.transform = `scale(${currentScale})`;
+      }
     });
   </script>
 </body>

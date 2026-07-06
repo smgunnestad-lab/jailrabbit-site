@@ -220,3 +220,49 @@ main {
   }
   .streamer-links { justify-content: center; }
 }
+/* Yearbook Grid */
+.yearbook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+/* Kortet med polaroid-look */
+.yearbook-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  position: relative;
+  text-align: center;
+  color: #333;
+}
+
+.yearbook-card:hover { transform: scale(1.05); }
+
+.yearbook-card img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.yearbook-card p { font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+
+/* Mørk Overlay (Lightbox) */
+.overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: none; justify-content: center; align-items: center;
+  z-index: 2000;
+}
+
+.overlay.active { display: flex; }
+
+.overlay video {
+  width: 80%; max-width: 600px;
+  border-radius: 8px; border: 4px solid white;
+}

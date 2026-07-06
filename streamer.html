@@ -7,7 +7,6 @@
 </head>
 <body>
 
-  <!-- Overlay for video -->
   <div class="overlay" id="overlay" onclick="this.classList.remove('active'); this.querySelector('video').pause();">
     <video id="popupVideo" controls></video>
   </div>
@@ -28,13 +27,10 @@
     <p>The legends that built JailRabbit.</p>
 
     <div class="yearbook-grid">
-      <!-- Eksempel på ett årskort -->
       <div class="yearbook-card" onmouseover="showVideo('video1.mp4')" onmouseout="hideVideo()">
         <img src="https://via.placeholder.com/200" alt="Streamer">
         <p>STREAMER NAME</p>
       </div>
-      
-      <!-- Du kan legge til flere yearbook-cards her -->
     </div>
   </main>
 
@@ -46,7 +42,6 @@
       overlay.classList.add('active');
       video.play();
     }
-    
     function hideVideo() {
       const overlay = document.getElementById('overlay');
       const video = document.getElementById('popupVideo');

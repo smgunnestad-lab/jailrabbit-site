@@ -7,23 +7,23 @@ body {
   color: #f5f5f5;
   margin: 0;
   padding: 0;
-  padding-top: 100px; /* Gir plass til den faste menyen */
+  padding-top: 120px; /* Mer plass på toppen så ingenting gjemmer seg bak menyen */
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh; /* Tillater at siden kan scrolle nedover */
+  min-height: 100vh; 
 }
 
 main {
   text-align: center;
   width: 100%;
-  max-width: 900px; /* Hindrer teksten i å bli for bred på store skjermer */
+  max-width: 900px; 
   padding: 0 20px;
   box-sizing: border-box;
 }
 
 /* =========================================
-   NAVIGASJON (Navbar)
+   NAVIGASJON (Navbar) - FIKSET FOR KUTTING
    ========================================= */
 .navbar {
   position: fixed;
@@ -32,12 +32,13 @@ main {
   width: 100%;
   background: #11152a;
   display: flex;
+  flex-wrap: wrap; /* LØSNINGEN: Tillater menyen å brytes over flere linjer på små skjermer */
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 3rem;
-  box-sizing: border-box; /* Hindrer at padding gjør menyen bredere enn skjermen */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4); /* Gir en pen skygge under menyen */
-  z-index: 1000; /* Sørger for at menyen alltid ligger over alt annet */
+  padding: 1rem 2rem;
+  box-sizing: border-box; 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4); 
+  z-index: 1000; 
 }
 
 .logo {
@@ -47,14 +48,16 @@ main {
 
 .nav-links {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: wrap; /* Tillater lenkene å tilpasse seg */
+  gap: 1.2rem;
+  justify-content: center;
 }
 
 .nav-links a, .navbar a {
   color: white;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.2s ease-in-out; /* Myk fargeovergang ved hover */
+  transition: color 0.2s ease-in-out; 
 }
 
 .nav-links a:hover, .navbar a:hover {
@@ -81,14 +84,14 @@ main {
   border-radius: 8px;
   font-weight: bold;
   width: 100%;
-  max-width: 300px; /* Gjør at alle knapper blir like brede */
+  max-width: 300px; 
   box-sizing: border-box;
-  transition: background 0.2s ease, transform 0.1s ease; /* Liten pop-effekt */
+  transition: background 0.2s ease, transform 0.1s ease; 
 }
 
 .btn:hover {
   background: #5b5bcc;
-  transform: scale(1.02); /* Knappen blir 2% større når du holder over */
+  transform: scale(1.02); 
 }
 
 .back-btn {
@@ -100,80 +103,120 @@ main {
 }
 
 /* =========================================
-   TYPOGRAFI & DIVERSE
+   BILDE/VIDEO-KARUSELL (Slider)
    ========================================= */
-.small {
+.carousel-section {
   margin-top: 4rem;
   margin-bottom: 2rem;
-  opacity: 0.6;
-  font-size: 0.9rem;
+  width: 100%;
+  max-width: 800px;
 }
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #161a33;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.6s ease-in-out; /* Den fine skli-animasjonen */
+}
+
+.carousel-slide {
+  min-width: 100%; /* Hvert bilde tar hele bredden */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel-slide img, .carousel-slide video {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+}
+.carousel-btn:hover { background: rgba(124, 124, 255, 0.8); }
+.carousel-btn.prev { left: 10px; }
+.carousel-btn.next { right: 10px; }
 
 /* =========================================
-   HALL OF FAME (Streamers)
+   STREAMERS DETALJSIDE (streamers.html)
    ========================================= */
-.hall-of-fame {
-  margin-top: 4rem;
-  padding: 2.5rem 2rem;
-  background: #161a33;
-  border-radius: 12px;
-  width: 100%;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  box-sizing: border-box;
+.streamer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+  text-align: left;
 }
 
-.hall-of-fame h2 {
+.streamer-card-detailed {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: #161a33;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.streamer-card-detailed img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #7c7cff;
+}
+
+.streamer-info h2 {
   margin-top: 0;
   margin-bottom: 0.5rem;
   color: #fff;
 }
 
-.hof-desc {
+.streamer-info p {
   color: #aaa;
-  margin-bottom: 2rem;
-  font-size: 0.95rem;
-}
-
-.streamer-grid {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap; /* Sørger for at kortene faller på neste linje på mobil */
-}
-
-.streamer-card {
-  background: #0f1220;
-  border: 2px solid #2a2d3e;
-  border-radius: 12px;
-  padding: 1.5rem 1rem;
-  text-decoration: none;
-  color: white;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  width: 140px;
-  text-align: center;
-}
-
-.streamer-card:hover {
-  transform: translateY(-8px); /* Løfter kortet litt opp */
-  border-color: #7c7cff;
-  box-shadow: 0 10px 20px rgba(124, 124, 255, 0.15); /* Legger på en blå "glød" */
-}
-
-.streamer-card img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%; /* Helt runde bilder */
-  object-fit: cover;
   margin-bottom: 1rem;
-  border: 3px solid #2a2d3e;
-  transition: border-color 0.3s ease;
 }
 
-.streamer-card:hover img {
-  border-color: #7c7cff;
+.streamer-links {
+  display: flex;
+  gap: 1rem;
 }
 
-.streamer-card h3 {
-  margin: 0;
-  font-size: 1.1rem;
+.streamer-link-btn {
+  background: #2a2d3e;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.streamer-link-btn:hover { background: #7c7cff; }
+
+@media (max-width: 600px) {
+  .streamer-card-detailed {
+    flex-direction: column;
+    text-align: center;
+  }
+  .streamer-links { justify-content: center; }
 }

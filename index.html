@@ -14,6 +14,7 @@
       <a href="trips.html">Trips</a>
       <a href="events.html">Events</a>
       <a href="whiteboard.html">Whiteboard</a>
+      <a href="streamers.html">Streamers</a>
     </nav>
   </header>
 
@@ -22,43 +23,81 @@
       <h1>🐇 JailRabbit</h1>
       <p>The official website for the JailRabbit community.</p>
 
+      <!-- Alle knapper samlet -->
       <div class="buttons">
         <a class="btn" href="https://discord.gg/jailrabbit" target="_blank">Join the Discord community</a>
         <a class="btn" href="https://jailrabbittravels.com/" target="_blank">Trip planning</a>
         <a class="btn" href="events.html">Events</a>
+        <a class="btn" href="whiteboard.html">Whiteboard</a>
+        <a class="btn" href="streamers.html">Streamers</a>
       </div>
     </div>
 
-    <!-- HALL OF FAME SEKSJON -->
-    <section class="hall-of-fame">
-      <h2>🏆 Hall of Fame - Streamers</h2>
-      <p class="hof-desc">Click on the images to check out the legends of the JailRabbit community!</p>
+    <!-- Bilde- og Videokarusell (Slider) -->
+    <section class="carousel-section">
+      <h2>Community Highlights</h2>
+      <p style="color: #aaa; margin-bottom: 1rem;">Memories from Discord meetups and events!</p>
       
-      <div class="streamer-grid">
-        
-        <!-- Streamer 1 -->
-        <a href="https://twitch.tv/ditt_streamernavn" target="_blank" class="streamer-card">
-          <img src="https://via.placeholder.com/150" alt="Streamer 1" />
-          <h3>StreamerNavn 1</h3>
-        </a>
+      <div class="carousel-container">
+        <!-- Piler for å bla -->
+        <button class="carousel-btn prev" id="prevBtn">&#10094;</button>
+        <button class="carousel-btn next" id="nextBtn">&#10095;</button>
 
-        <!-- Streamer 2 -->
-        <a href="https://youtube.com/ditt_streamernavn" target="_blank" class="streamer-card">
-          <img src="https://via.placeholder.com/150" alt="Streamer 2" />
-          <h3>StreamerNavn 2</h3>
-        </a>
+        <!-- Selve sporet bildene ligger på -->
+        <div class="carousel-track" id="track">
+          
+          <!-- Bilde 1 (Bytt ut src med dine egne bilder senere) -->
+          <div class="carousel-slide">
+            <img src="https://via.placeholder.com/800x400/161a33/ffffff?text=Community+Meetup+1" alt="Meetup 1">
+          </div>
+          
+          <!-- Bilde 2 -->
+          <div class="carousel-slide">
+            <img src="https://via.placeholder.com/800x400/2a2d3e/ffffff?text=Game+Night" alt="Game Night">
+          </div>
+          
+          <!-- Bilde 3 -->
+          <div class="carousel-slide">
+            <img src="https://via.placeholder.com/800x400/7c7cff/ffffff?text=Epic+Moments" alt="Epic Moments">
+          </div>
 
-        <!-- Streamer 3 -->
-        <a href="https://twitch.tv/ditt_streamernavn" target="_blank" class="streamer-card">
-          <img src="https://via.placeholder.com/150" alt="Streamer 3" />
-          <h3>StreamerNavn 3</h3>
-        </a>
-
+        </div>
       </div>
     </section>
 
     <p class="small">Under development – more to come.</p>
   </main>
+
+  <!-- Enkelt JavaScript som får karusellen til å fungere og gli av seg selv -->
+  <script>
+    const track = document.getElementById('track');
+    const slides = document.querySelectorAll('.carousel-slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    let currentIndex = 0;
+
+    function updateCarousel() {
+      // Flytter "sporet" til venstre basert på hvilket bilde vi er på
+      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % slides.length; // Går tilbake til start hvis vi er på slutten
+      updateCarousel();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      updateCarousel();
+    });
+
+    // Får den til å bla automatisk hver 4. sekund
+    setInterval(() => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      updateCarousel();
+    }, 4000);
+  </script>
 
 </body>
 </html>

@@ -4,279 +4,323 @@
   <meta charset="UTF-8" />
   <title>Whiteboard - JailRabbit</title>
   <style>
-    /* Fjerner marger og aktiverer rutenett-bakgrunnen */
+    /* 1. GRUNNOPPSETT */
     body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden; 
-      background-color: #f8f9fa;
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      overflow: hidden; /* Skjuler vanlige scrollbars */
+      background-color: #1a1d2e; /* Mørk bakgrunn utenfor arket */
       font-family: system-ui, sans-serif;
-      /* Lager det gjennomsiktige rutenettet */
-      background-image: 
-        linear-gradient(rgba(200, 200, 200, 0.3) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200, 200, 200, 0.3) 1px, transparent 1px);
-      background-size: 25px 25px; /* Størrelse på rutene */
     }
 
-    /* Container for lerretet for å støtte zooming */
-    #canvas-container {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transform-origin: center center;
-      transition: transform 0.2s ease-out;
-    }
-
-    canvas {
-      background: transparent;
+    /* 2. ARBEIDSOMRÅDET (Workspace) */
+    #workspace {
+      width: 100vw; height: 100vh;
+      position: relative;
       cursor: crosshair;
     }
 
-    /* Smartere Navbar-hover-sone for å forhindre at den forsvinner for fort */
-    .navbar-hover-zone {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 80px;
-      z-index: 100;
+    /* Dette er selve "Arket" som flyttes og zoomes */
+    #canvas-wrapper {
+      position: absolute;
+      width: 3000px; height: 2000px;
+      background-color: #ffffff; /* Arket er hvitt */
+      /* CSS-rutenettet tegnes på arket, under tegningen */
+      background-image: 
+        linear-gradient(rgba(200, 200, 200, 0.4) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200, 200, 200, 0.4) 1px, transparent 1px);
+      background-size: 30px 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transform-origin: 0 0; /* Viktig for zoom-matematikken */
     }
 
-    /* Selve menyen */
+    canvas {
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    /* 3. TOPP-MENYEN */
+    .navbar-hover-zone {
+      position: fixed; top: 0; left: 0; width: 100%; height: 70px; z-index: 100;
+    }
     .navbar {
-      position: absolute;
-      top: -120px; /* Skjult som standard */
-      left: 0;
-      width: 100%;
-      background: #11152a;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 10px 2rem;
-      box-sizing: border-box;
+      position: absolute; top: -100px; left: 0; width: 100%;
+      background: #11152a; color: white; display: flex;
+      justify-content: center; align-items: center;
+      padding: 15px 2rem; box-sizing: border-box;
       transition: top 0.3s ease-in-out;
       box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      gap: 3rem;
     }
-
-    /* Holder menyen åpen lengre */
-    .navbar-hover-zone:hover .navbar,
-    .navbar:hover,
-    .navbar:focus-within {
-      top: 0;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      margin-bottom: 10px;
-    }
-
-    .nav-links a {
-      color: #7c7cff;
-      text-decoration: none;
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-
-    .nav-links a:hover {
-      color: white;
-    }
-
-    /* Verktøylinjen */
-    .tools {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      background: #0f1220;
-      padding: 10px 25px;
-      border-radius: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .tool-group {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .tools label {
-      font-size: 0.85rem;
-      color: #f5f5f5;
-    }
+    .navbar-hover-zone:hover .navbar, .navbar:hover, .navbar:focus-within { top: 0; }
     
-    .tools input, .tools select {
-      background: #2a2d3e;
-      color: white;
-      border: 1px solid #444;
-      border-radius: 4px;
-      padding: 4px;
-    }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a { color: #7c7cff; text-decoration: none; font-weight: 600; }
+    .nav-links a:hover { color: white; }
 
     .btn {
-      background: #7c7cff;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.2s;
+      background: #7c7cff; color: white; border: none;
+      padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold;
+    }
+    .btn:hover { background: #5b5bcc; }
+    .btn-download { background: #28a745; }
+    .btn-download:hover { background: #218838; }
+
+    /* 4. VENSTRE SIDEBAR (Farger og verktøy) */
+    .sidebar {
+      position: fixed; top: 20%; left: 0;
+      background: #11152a; padding: 20px;
+      border-radius: 0 15px 15px 0;
+      box-shadow: 5px 5px 20px rgba(0,0,0,0.3);
+      display: flex; flex-direction: column; align-items: center; gap: 15px;
+      z-index: 90;
+      transition: transform 0.3s ease-in-out;
     }
 
-    .btn:hover { background: #5b5bcc; }
-    .btn-danger { background: #ff4c4c; }
-    .btn-danger:hover { background: #cc0000; }
+    /* Når vi tegner, sklir menyen delvis ut til venstre */
+    .sidebar.drawing {
+      transform: translateX(-70%);
+      opacity: 0.6;
+    }
+
+    .color-section { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    
+    /* Muse-velger knapper (M1 / M2) */
+    .mouse-toggles { display: flex; gap: 5px; }
+    .mouse-btn {
+      background: #2a2d3e; color: gray; border: 2px solid transparent;
+      padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;
+    }
+    .mouse-btn.active { border-color: #7c7cff; color: white; background: #1a1d2e; }
+
+    /* HEX Input */
+    .hex-input {
+      background: #2a2d3e; color: white; border: 1px solid #444;
+      border-radius: 4px; padding: 5px; width: 70px; text-align: center;
+      font-family: monospace;
+    }
+
+    /* Rund fargevelger */
+    .color-circle-wrapper {
+      width: 50px; height: 50px; border-radius: 50%;
+      overflow: hidden; border: 3px solid #7c7cff;
+      cursor: pointer;
+    }
+    .color-circle-wrapper input[type="color"] {
+      width: 200%; height: 200%; transform: translate(-25%, -25%); cursor: pointer; border: none;
+    }
+
+    /* Andre verktøy i sidebar */
+    .sidebar label { color: white; font-size: 0.8rem; margin-bottom: -10px; }
+    .sidebar select, .sidebar input[type="range"] {
+      background: #2a2d3e; color: white; border: 1px solid #444;
+      border-radius: 4px; padding: 5px; width: 100px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Toppmenyen som glir ned -->
+  <!-- Toppmenyen -->
   <div class="navbar-hover-zone">
     <header class="navbar">
-      
-      <!-- Sidenavigasjon midtsentrert -->
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="trips.html">Trips</a>
         <a href="events.html">Events</a>
         <a href="whiteboard.html" style="color: white; border-bottom: 2px solid white;">Whiteboard</a>
       </div>
-
-      <!-- Masse funksjoner og verktøy -->
-      <div class="tools">
-        
-        <div class="tool-group">
-          <label for="tool">Tool:</label>
-          <select id="tool">
-            <option value="pen">Pen</option>
-            <option value="line">Line</option>
-            <option value="rect">Rectangle</option>
-            <option value="circle">Circle</option>
-            <option value="eraser">Eraser</option>
-          </select>
-        </div>
-
-        <div class="tool-group">
-          <label title="Left Click">Primary:</label>
-          <input type="color" id="primaryColor" value="#000000">
-          
-          <label title="Right Click">Secondary:</label>
-          <input type="color" id="secondaryColor" value="#7c7cff">
-        </div>
-
-        <div class="tool-group">
-          <label for="brushSize">Size:</label>
-          <input type="range" id="brushSize" min="1" max="50" value="5">
-        </div>
-        
-        <div class="tool-group">
-          <button class="btn" id="zoomOutBtn">Zoom -</button>
-          <button class="btn" id="zoomInBtn">Zoom +</button>
-        </div>
-
-        <div class="tool-group">
-          <button class="btn" id="undoBtn">Undo (Ctrl+Z)</button>
-          <button class="btn btn-danger" id="clearBtn">Clear</button>
-        </div>
-
+      
+      <div style="display: flex; gap: 10px;">
+        <button class="btn" id="undoBtn">Undo (Ctrl+Z)</button>
+        <button class="btn" id="clearBtn" style="background:#ff4c4c;">Clear</button>
+        <button class="btn btn-download" id="downloadBtn">⬇ Download Board</button>
       </div>
     </header>
   </div>
 
-  <!-- Lerretet pakkes inn i en container for zooming -->
-  <div id="canvas-container">
-    <canvas id="board"></canvas>
+  <!-- Venstre Sidebar -->
+  <div class="sidebar" id="sidebar">
+    
+    <div class="mouse-toggles">
+      <button class="mouse-btn active" id="btnM1">M1</button>
+      <button class="mouse-btn" id="btnM2">M2</button>
+    </div>
+
+    <div class="color-section">
+      <input type="text" class="hex-input" id="hexInput" value="#000000">
+      <div class="color-circle-wrapper">
+        <input type="color" id="colorPicker" value="#000000">
+      </div>
+    </div>
+
+    <label>Tool:</label>
+    <select id="tool">
+      <option value="pen">Pen</option>
+      <option value="line">Line</option>
+      <option value="rect">Rectangle</option>
+      <option value="circle">Circle</option>
+      <option value="eraser">Eraser</option>
+    </select>
+
+    <label>Size:</label>
+    <input type="range" id="brushSize" min="1" max="50" value="5">
+  </div>
+
+  <!-- Arbeidsområdet med arket -->
+  <div id="workspace">
+    <div id="canvas-wrapper">
+      <canvas id="board" width="3000" height="2000"></canvas>
+    </div>
   </div>
 
   <script>
+    const workspace = document.getElementById('workspace');
+    const wrapper = document.getElementById('canvas-wrapper');
     const canvas = document.getElementById('board');
     const ctx = canvas.getContext('2d');
-    const canvasContainer = document.getElementById('canvas-container');
+    const sidebar = document.getElementById('sidebar');
+
+    // Farger og verktøy
+    let colors = { M1: '#000000', M2: '#7c7cff' };
+    let activeMouse = 'M1'; // Hvilken knapp vi redigerer fargen til
     
-    // Verktøy-variabler
+    const hexInput = document.getElementById('hexInput');
+    const colorPicker = document.getElementById('colorPicker');
+    const btnM1 = document.getElementById('btnM1');
+    const btnM2 = document.getElementById('btnM2');
     const toolSelect = document.getElementById('tool');
-    const primaryColor = document.getElementById('primaryColor');
-    const secondaryColor = document.getElementById('secondaryColor');
     const brushSize = document.getElementById('brushSize');
+
+    // Kamera / Panning / Zoom variabler
+    let scale = 1;
+    // Sentrerer det 3000x2000 store arket på skjermen ved start
+    let panX = (window.innerWidth - 3000) / 2;
+    let panY = (window.innerHeight - 2000) / 2;
     
+    // Tegnevariabler
     let isDrawing = false;
     let startX, startY;
-    let currentScale = 1; // For zooming
-    
-    // Historikk for Undo-funksjonen
     let historyArray = [];
     let historyStep = -1;
 
-    // Sett canvas-størrelse til skjermstørrelse
-    function initCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        saveState(); // Lagre det blanke arket som første trinn i historikken
+    // --- OPPSTART ---
+    function updateTransform() {
+      wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
     }
-    initCanvas();
+    updateTransform();
+    saveState(); // Lagre tomt ark i historikken
 
-    // -- UTREGNING AV KOORDINATER MED ZOOM --
-    // Fordi vi kan zoome, må vi regne om hvor musen *faktisk* er på arket
+    // Forhindre standard høyreklikk-meny
+    window.addEventListener('contextmenu', e => e.preventDefault());
+
+    // --- FARGEVELGER LOGIKK ---
+    function updateColorUI() {
+      hexInput.value = colors[activeMouse];
+      colorPicker.value = colors[activeMouse];
+      btnM1.classList.toggle('active', activeMouse === 'M1');
+      btnM2.classList.toggle('active', activeMouse === 'M2');
+    }
+
+    btnM1.addEventListener('click', () => { activeMouse = 'M1'; updateColorUI(); });
+    btnM2.addEventListener('click', () => { activeMouse = 'M2'; updateColorUI(); });
+
+    colorPicker.addEventListener('input', (e) => {
+      colors[activeMouse] = e.target.value;
+      hexInput.value = e.target.value;
+    });
+
+    hexInput.addEventListener('input', (e) => {
+      if(/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+        colors[activeMouse] = e.target.value;
+        colorPicker.value = e.target.value;
+      }
+    });
+
+    // --- ZOOM & PAN (Scroll og M1+M2) ---
+    workspace.addEventListener('wheel', (e) => {
+      e.preventDefault(); // Stopp scrolling av nettsiden
+      const zoomSensitivity = 0.001;
+      const delta = -e.deltaY * zoomSensitivity;
+      const newScale = Math.min(Math.max(0.2, scale + delta), 5); // Max zoom inn/ut
+      
+      // Regn ut musens posisjon i forhold til containeren for å zoome PÅ musen
+      const mouseX = e.clientX - panX;
+      const mouseY = e.clientY - panY;
+
+      panX -= mouseX * (newScale / scale - 1);
+      panY -= mouseY * (newScale / scale - 1);
+      scale = newScale;
+      updateTransform();
+    }, { passive: false });
+
+    // Hjelpefunksjon: Konverterer mus-piksler til lerret-piksler, uansett zoom
     function getMousePos(e) {
-      const rect = canvas.getBoundingClientRect();
       return {
-        x: (e.clientX - rect.left) * (canvas.width / rect.width),
-        y: (e.clientY - rect.top) * (canvas.height / rect.height)
+        x: (e.clientX - panX) / scale,
+        y: (e.clientY - panY) / scale
       };
     }
 
-    // -- TEGNE-LOGIKK --
-    
-    // Forhindre standard høyreklikk-meny på lerretet
-    canvas.addEventListener('contextmenu', e => e.preventDefault());
-
-    canvas.addEventListener('mousedown', (e) => {
-      isDrawing = true;
+    // --- TEGNE & DRA-LOGIKK ---
+    workspace.addEventListener('mousedown', (e) => {
+      // 3 = Både M1+M2 holdes inne, 4 = Musehjulet trykkes inn. (Dra-modus)
+      if (e.buttons === 3 || e.buttons === 4) return; 
+      
       const pos = getMousePos(e);
+      if(pos.x < 0 || pos.y < 0 || pos.x > canvas.width || pos.y > canvas.height) return; // Utenfor arket
+
+      isDrawing = true;
+      sidebar.classList.add('drawing'); // Skyv menyen til venstre
       startX = pos.x;
       startY = pos.y;
 
       ctx.beginPath();
       ctx.moveTo(startX, startY);
       
-      // Bestem farge basert på hvilken musetast som trykkes (0 = Venstre, 2 = Høyre)
-      const currentColor = (e.button === 2) ? secondaryColor.value : primaryColor.value;
+      const tool = toolSelect.value;
+      const drawColor = (e.button === 2) ? colors.M2 : colors.M1;
       
-      ctx.strokeStyle = (toolSelect.value === 'eraser') ? 'white' : currentColor;
-      ctx.lineWidth = brushSize.value;
+      // VISKELÆR-MAGIEN: Fjerner fargen, men beholder CSS-rutenettet bak!
+      if (tool === 'eraser') {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineWidth = brushSize.value * 2; // Litt større viskelær
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = drawColor;
+        ctx.lineWidth = brushSize.value;
+      }
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
     });
 
-    canvas.addEventListener('mousemove', (e) => {
+    workspace.addEventListener('mousemove', (e) => {
+      // PANORERING (Dra seg rundt)
+      if (e.buttons === 3 || e.buttons === 4) {
+        panX += e.movementX;
+        panY += e.movementY;
+        updateTransform();
+        workspace.style.cursor = 'grab';
+        return;
+      } else {
+        workspace.style.cursor = 'crosshair';
+      }
+
+      // TEGNING
       if (!isDrawing) return;
       const pos = getMousePos(e);
       const tool = toolSelect.value;
 
       if (tool === 'pen' || tool === 'eraser') {
-        // Tegn kontinuerlig
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
       } else {
-        // For figurer: Vi må tømme lerretet tilbake til forrige lagrede steg 
-        // før vi tegner figuren på nytt under musen (preview-effekt)
+        // For figurer: Last inn forrige lagrede steg først, tegn oppå (preview)
         restoreState(historyStep);
         ctx.beginPath();
-        
         if (tool === 'line') {
           ctx.moveTo(startX, startY);
           ctx.lineTo(pos.x, pos.y);
         } else if (tool === 'rect') {
-          const width = pos.x - startX;
-          const height = pos.y - startY;
-          ctx.rect(startX, startY, width, height);
+          ctx.rect(startX, startY, pos.x - startX, pos.y - startY);
         } else if (tool === 'circle') {
           const radius = Math.sqrt(Math.pow(pos.x - startX, 2) + Math.pow(pos.y - startY, 2));
           ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
@@ -285,25 +329,19 @@
       }
     });
 
-    canvas.addEventListener('mouseup', () => {
+    const stopDrawing = () => {
       if (isDrawing) {
         isDrawing = false;
-        ctx.closePath();
-        saveState(); // Lagre bildet når du er ferdig med streken/figuren
-      }
-    });
-
-    canvas.addEventListener('mouseleave', () => {
-      if (isDrawing) {
-        isDrawing = false;
+        sidebar.classList.remove('drawing'); // Ta menyen tilbake
         ctx.closePath();
         saveState();
       }
-    });
+    };
+    workspace.addEventListener('mouseup', stopDrawing);
+    workspace.addEventListener('mouseleave', stopDrawing);
 
-    // -- UNDO OG HISTORIKK --
+    // --- UNDO (Historikk) ---
     function saveState() {
-      // Hvis vi har "angret" tilbake og tegner noe nytt, slett fremtiden
       if (historyStep < historyArray.length - 1) {
         historyArray = historyArray.slice(0, historyStep + 1);
       }
@@ -317,38 +355,41 @@
       }
     }
 
-    function undo() {
-      if (historyStep > 0) {
-        historyStep--;
-        restoreState(historyStep);
-      }
-    }
-
-    document.getElementById('undoBtn').addEventListener('click', undo);
+    document.getElementById('undoBtn').addEventListener('click', () => {
+      if (historyStep > 0) { historyStep--; restoreState(historyStep); }
+    });
     
-    // Tastatur-snarvei for Undo (Ctrl + Z)
     window.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.key === 'z') {
-        undo();
+        if (historyStep > 0) { historyStep--; restoreState(historyStep); }
       }
     });
 
-    // -- KNAPPER (Tøm, Zoom) --
     document.getElementById('clearBtn').addEventListener('click', () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      saveState(); // Å tømme brettet lagres også som et steg du kan angre på!
+      saveState();
     });
 
-    document.getElementById('zoomInBtn').addEventListener('click', () => {
-      currentScale += 0.2;
-      canvasContainer.style.transform = `scale(${currentScale})`;
-    });
-
-    document.getElementById('zoomOutBtn').addEventListener('click', () => {
-      if (currentScale > 0.4) {
-        currentScale -= 0.2;
-        canvasContainer.style.transform = `scale(${currentScale})`;
-      }
+    // --- DOWNLOAD BOARD (Uten rutenett!) ---
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      // 1. Lag et usynlig reserve-ark
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      const tCtx = tempCanvas.getContext('2d');
+      
+      // 2. Fyll reserve-arket med kritthvitt (uten ruter)
+      tCtx.fillStyle = '#ffffff';
+      tCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      
+      // 3. Stemple tegningen din oppå det hvite arket
+      tCtx.drawImage(canvas, 0, 0);
+      
+      // 4. Last ned
+      const link = document.createElement('a');
+      link.download = 'jailrabbit_masterpiece.png';
+      link.href = tempCanvas.toDataURL('image/png');
+      link.click();
     });
   </script>
 </body>

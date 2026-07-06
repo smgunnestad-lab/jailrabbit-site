@@ -2,18 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Streamer Yearbook</title>
+  <title>Streamers</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- LIGHTBOX / POPUP -->
-  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-    <div class="lightbox-content" onclick="event.stopPropagation()">
-      <video id="popupVideo" controls>
-        <source src="" type="video/mp4">
-      </video>
-    </div>
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="closeVideo()">
+    <video id="popupVideo" controls></video>
   </div>
 
   <header class="navbar">
@@ -32,32 +28,27 @@
     <p>The legends that built JailRabbit.</p>
 
     <div class="yearbook-grid">
-      <!-- EKSEMPEL PÅ ETT KORT -->
-      <div class="yearbook-card" onmouseover="openLightbox('video1.mp4')" onmouseout="closeLightbox()">
-        <img src="https://via.placeholder.com/300" alt="Streamer Name">
-        <div class="card-text">
-          <h3>STREAMER NAME</h3>
-          <p>Class of 2026</p>
-        </div>
+      <!-- EKSEMPEL -->
+      <div class="yearbook-card" onmouseover="showVideo('video1.mp4')" onmouseout="closeVideo()">
+        <img src="https://via.placeholder.com/300" alt="Streamer">
+        <p>STREAMER NAME</p>
       </div>
-      <!-- Legg til flere yearbook-card her -->
     </div>
   </main>
 
   <script>
-    function openLightbox(videoSrc) {
-      const lightbox = document.getElementById('lightbox');
-      const video = document.getElementById('popupVideo');
-      video.src = videoSrc;
-      lightbox.style.display = 'flex';
-      video.play();
+    function showVideo(src) {
+      const o = document.getElementById('overlay');
+      const v = document.getElementById('popupVideo');
+      v.src = src;
+      o.classList.add('active');
+      v.play();
     }
-    
-    function closeLightbox() {
-      const lightbox = document.getElementById('lightbox');
-      const video = document.getElementById('popupVideo');
-      lightbox.style.display = 'none';
-      video.pause();
+    function closeVideo() {
+      const o = document.getElementById('overlay');
+      const v = document.getElementById('popupVideo');
+      o.classList.remove('active');
+      v.pause();
     }
   </script>
 </body>

@@ -7,8 +7,13 @@
 </head>
 <body>
 
-  <div class="overlay" id="overlay" onclick="this.classList.remove('active'); this.querySelector('video').pause();">
-    <video id="popupVideo" controls></video>
+  <!-- LIGHTBOX / POPUP -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+      <video id="popupVideo" controls>
+        <source src="" type="video/mp4">
+      </video>
+    </div>
   </div>
 
   <header class="navbar">
@@ -27,25 +32,31 @@
     <p>The legends that built JailRabbit.</p>
 
     <div class="yearbook-grid">
-      <div class="yearbook-card" onmouseover="showVideo('video1.mp4')" onmouseout="hideVideo()">
-        <img src="https://via.placeholder.com/200" alt="Streamer">
-        <p>STREAMER NAME</p>
+      <!-- EKSEMPEL PÅ ETT KORT -->
+      <div class="yearbook-card" onmouseover="openLightbox('video1.mp4')" onmouseout="closeLightbox()">
+        <img src="https://via.placeholder.com/300" alt="Streamer Name">
+        <div class="card-text">
+          <h3>STREAMER NAME</h3>
+          <p>Class of 2026</p>
+        </div>
       </div>
+      <!-- Legg til flere yearbook-card her -->
     </div>
   </main>
 
   <script>
-    function showVideo(videoSrc) {
-      const overlay = document.getElementById('overlay');
+    function openLightbox(videoSrc) {
+      const lightbox = document.getElementById('lightbox');
       const video = document.getElementById('popupVideo');
       video.src = videoSrc;
-      overlay.classList.add('active');
+      lightbox.style.display = 'flex';
       video.play();
     }
-    function hideVideo() {
-      const overlay = document.getElementById('overlay');
+    
+    function closeLightbox() {
+      const lightbox = document.getElementById('lightbox');
       const video = document.getElementById('popupVideo');
-      overlay.classList.remove('active');
+      lightbox.style.display = 'none';
       video.pause();
     }
   </script>

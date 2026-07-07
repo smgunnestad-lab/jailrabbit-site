@@ -76,7 +76,7 @@
       transition: transform 0.3s ease-in-out;
     }
 
-    /* Når vi tegner, sklir menyen delvis ut til venstre */
+    /* Sklir menyen delvis ut til venstre */
     .sidebar.drawing {
       transform: translateX(-70%);
       opacity: 0.6;
@@ -192,7 +192,7 @@
 
     // Kamera / Panning / Zoom variabler
     let scale = 1;
-    // Sentrerer det 3000x2000 store arket på skjermen ved start
+    // Sentrerer det 3000x2000 arket
     let panX = (window.innerWidth - 3000) / 2;
     let panY = (window.innerHeight - 2000) / 2;
     
@@ -209,7 +209,7 @@
     updateTransform();
     saveState(); // Lagre tomt ark i historikken
 
-    // Forhindre standard høyreklikk-meny
+    // Hindrer standard høyreklikk-meny
     window.addEventListener('contextmenu', e => e.preventDefault());
 
     // --- FARGEVELGER LOGIKK ---
@@ -279,7 +279,7 @@
       const tool = toolSelect.value;
       const drawColor = (e.button === 2) ? colors.M2 : colors.M1;
       
-      // VISKELÆR-MAGIEN: Fjerner fargen, men beholder CSS-rutenettet bak!
+      // Eraser: Fjerner fargen, men beholder CSS-rutenettet bak
       if (tool === 'eraser') {
         ctx.globalCompositeOperation = 'destination-out';
         ctx.lineWidth = brushSize.value * 2; // Litt større viskelær
@@ -313,7 +313,7 @@
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
       } else {
-        // For figurer: Last inn forrige lagrede steg først, tegn oppå (preview)
+        // For figurer: Last inn forrige lagrede steg først(preview)
         restoreState(historyStep);
         ctx.beginPath();
         if (tool === 'line') {

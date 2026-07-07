@@ -30,17 +30,44 @@
     <h1>Community Streamers</h1>
     <p>Our top recommended content creators this month.</p>
 
-    <div class="yearbook-grid">
-      <div class="yearbook-card" 
-           onmouseover="document.getElementById('overlay').classList.add('active'); document.getElementById('popupVideo').play();" 
-           onmouseout="document.getElementById('overlay').classList.remove('active'); document.getElementById('popupVideo').pause();">
-        <img src="https://via.placeholder.com/300" alt="Streamer">
-        <div class="card-text">
-          <h3>Laps7219</h3>
-          <p>Class of 2026</p>
-        </div>
-      </div>
-    </div>
+    <div class="yearbook-card" 
+     onmouseover="openVideo('videos/lapsclip.mp4')" 
+     onmouseout="closeVideo()">
+  <img src="https://via.placeholder.com/300" alt="Streamer">
+  <div class="card-text">
+    <h3>STREAMER NAME</h3>
+    <p>Class of 2026</p>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-content">
+    <video id="popupVideo" width="100%" controls>
+      <source id="videoSource" src="" type="video/mp4">
+      Din nettleser støtter ikke video.
+    </video>
+  </div>
+</div>
+
+<script>
+  function openVideo(src) {
+    const overlay = document.getElementById('overlay');
+    const video = document.getElementById('popupVideo');
+    const source = document.getElementById('videoSource');
+    
+    source.src = src;
+    video.load(); // Tvinger nettleseren til å laste den nye filen
+    overlay.classList.add('active');
+    video.play();
+  }
+
+  function closeVideo() {
+    const overlay = document.getElementById('overlay');
+    const video = document.getElementById('popupVideo');
+    overlay.classList.remove('active');
+    video.pause();
+  }
+</script>
   </main>
 
 </body>

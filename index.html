@@ -43,10 +43,10 @@
         <button class="carousel-btn prev" id="prevBtn">&#10094;</button>
         <button class="carousel-btn next" id="nextBtn">&#10095;</button>
 
-        <!-- Selve sporet bildene ligger på -->
+        <!-- Hvor selve bilde ligger -->
         <div class="carousel-track" id="track">
           
-          <!-- Bilde 1 (Bytt ut src med dine egne bilder senere) -->
+          <!-- Bilde 1 (endre etter src) -->
           <div class="carousel-slide">
             <img src="https://via.placeholder.com/800x400/161a33/ffffff?text=Community+Meetup+1" alt="Meetup 1">
           </div>
@@ -92,7 +92,7 @@
       updateCarousel();
     });
 
-    // Får den til å bla automatisk hver 4. sekund
+    // blar automatisk til venstre vært 4. sekund
     setInterval(() => {
       currentIndex = (currentIndex + 1) % slides.length;
       updateCarousel();

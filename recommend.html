@@ -72,13 +72,13 @@
   </main>
 
   <script>
-    // 1. Henter ALLE kortene i grid-en (så du kan ha uendelig mange streamere)
+    // 1. Henter ALLE kortene i grid-en (inf stream oversikt)
     const cards = document.querySelectorAll('.yearbook-card');
     const overlay = document.getElementById('overlay');
     const video = document.getElementById('popupVideo');
     const source = document.getElementById('videoSource');
 
-    // 2. Går gjennom hvert enkelt kort og legger til hover-logikken
+    // 2. Overview over alle P-kort
     cards.forEach(card => {
       
       card.addEventListener('mouseenter', () => {

@@ -30,9 +30,7 @@
     <h1>Community Streamers</h1>
     <p>Our top recommended content creators this month.</p>
 
-    <div class="yearbook-card" 
-     onmouseover="openVideo('videos/lapsclip.mp4')" 
-     onmouseout="closeVideo()">
+    <div class="yearbook-card" data-video="videos/lapsclip.mp4">
   <img src="https://via.placeholder.com/300" alt="Streamer">
   <div class="card-text">
     <h3>STREAMER NAME</h3>
@@ -40,33 +38,26 @@
   </div>
 </div>
 
-<div class="overlay" id="overlay">
-  <div class="overlay-content">
-    <video id="popupVideo" width="100%" controls>
-      <source id="videoSource" src="" type="video/mp4">
-      Din nettleser støtter ikke video.
-    </video>
-  </div>
-</div>
-
 <script>
-  function openVideo(src) {
-    const overlay = document.getElementById('overlay');
-    const video = document.getElementById('popupVideo');
-    const source = document.getElementById('videoSource');
-    
-    source.src = src;
-    video.load(); // Tvinger nettleseren til å laste den nye filen
+  const card = document.querySelector('.yearbook-card');
+  const overlay = document.getElementById('overlay');
+  const video = document.getElementById('popupVideo');
+  const source = document.getElementById('videoSource');
+
+  card.addEventListener('mouseenter', () => {
+    const vSrc = card.getAttribute('data-video');
+    source.src = vSrc;
+    video.load();
     overlay.classList.add('active');
     video.play();
-  }
+  });
 
-  function closeVideo() {
-    const overlay = document.getElementById('overlay');
-    const video = document.getElementById('popupVideo');
+  // Vi legger til en "mouseleave" på selve overlayet i stedet, 
+  // slik at videoen holder seg åpen så lenge du er over kortet ELLER overlayet
+  overlay.addEventListener('mouseleave', () => {
     overlay.classList.remove('active');
     video.pause();
-  }
+  });
 </script>
   </main>
 

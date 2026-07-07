@@ -6,6 +6,15 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-content">
+      <video id="popupVideo" controls>
+        <source src="video1.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
   <header class="navbar">
     <div class="logo">🐇 JailRabbit</div>
     <nav class="nav-links">
@@ -13,13 +22,26 @@
       <a href="trips.html">Trips</a>
       <a href="events.html">Events</a>
       <a href="whiteboard.html">Whiteboard</a>
-      <a href="recommend.html">Recommended</a>
+      <a href="recommend.html" style="color: #7c7cff;">Recommended</a>
     </nav>
   </header>
 
   <main>
-    <h1>Recommended</h1>
-    <p>Coming soon...</p>
+    <h1>Community Streamers</h1>
+    <p>Our top recommended content creators this month.</p>
+
+    <div class="yearbook-grid">
+      <div class="yearbook-card" 
+           onmouseover="document.getElementById('overlay').classList.add('active'); document.getElementById('popupVideo').play();" 
+           onmouseout="document.getElementById('overlay').classList.remove('active'); document.getElementById('popupVideo').pause();">
+        <img src="https://via.placeholder.com/300" alt="Streamer">
+        <div class="card-text">
+          <h3>STREAMER NAME</h3>
+          <p>Class of 2026</p>
+        </div>
+      </div>
+    </div>
   </main>
+
 </body>
 </html>

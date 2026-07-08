@@ -5,7 +5,9 @@
   <title>Recommended - JailRabbit</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Overlay */
+    /* -------------------------------------
+       1. OVERLAY (For video/flimmerfiks)
+       ------------------------------------- */
     .flicker-fix-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.85); 
@@ -22,36 +24,127 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
 
-    /* Bilde-fiks og trigger */
-    .yearbook-card img {
+    /* -------------------------------------
+       2. 3D SYLINDER SCENE
+       ------------------------------------- */
+    .scene {
       width: 100%;
-      height: 180px; /* Gjør bildene mindre */
-      object-fit: cover;
-      cursor: pointer;
+      height: 600px; /* Gir plass til at kortene kan utvide seg nedover */
+      perspective: 1200px; /* Skaper dybden i 3D-rommet */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+      overflow: hidden; /* Skjuler det som går for langt ut på sidene */
     }
 
-    /* Info og Tags (Skjult som standard) */
+    .carousel-cylinder {
+      width: 260px; /* Bredden på selve sporet */
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d; /* Sier at barna skal leve i et 3D-rom */
+      animation: spinCylinder 25s infinite linear; /* Snurrer evig */
+    }
+
+    /* Stopper roteringen når musen er på karusellen */
+    .carousel-cylinder:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes spinCylinder {
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(-360deg); }
+    }
+
+    /* Hver posisjon i sylinderen (JS styrer vinkelen) */
+    .cylinder-item {
+      position: absolute;
+      top: 50px; /* Startposisjon fra toppen av scenen */
+      left: 0;
+      width: 260px;
+      transform-style: preserve-3d;
+    }
+
+    /* -------------------------------------
+       3. KORT-DESIGN & HOVER EFFEKTER
+       ------------------------------------- */
+    .yearbook-card {
+      background: white;
+      padding: 15px 15px 40px 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #333;
+      
+      /* Animeringen når kortet "popper ut" i 3D */
+      transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
+      transform: scale(1) translateZ(0);
+    }
+
+    /* Når man hovrer over kortet, popper det frem, mens sylinderen står stille */
+    .yearbook-card:hover { 
+      transform: scale(1.15) translateZ(50px); 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.9);
+      z-index: 100; /* Legger seg foran de andre */
+    }
+
+    .img-container {
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      border-bottom: 1px solid #eee;
+    }
+
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.4s ease;
+    }
+
+    /* Bildet får en liten ekstra zoom inni rammen */
+    .yearbook-card:hover .img-container img {
+      transform: scale(1.08); 
+    }
+
+    /* Tekst, tags og skjult info */
+    .card-text { margin-top: 15px; text-align: center; width: 100%; }
+    .card-text h3 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
+    .card-text p { margin: 5px 0 0; font-family: serif; font-style: italic; color: #666; }
+
     .extra-info {
       max-height: 0;
       opacity: 0;
       overflow: hidden;
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
       font-size: 0.85rem;
     }
     
-    /* Vises når musen er på kortet */
     .yearbook-card:hover .extra-info {
-      max-height: 150px;
+      max-height: 250px; 
       opacity: 1;
-      margin-top: 10px;
+      margin-top: 15px;
     }
 
-    .tags {
-      display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; margin-top: 8px;
+    .tags-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #888;
+      font-weight: bold;
+      margin-bottom: 5px;
+      letter-spacing: 1px;
     }
+
+    .tags { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
     .tag {
-      background: #eee; color: #333; padding: 3px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;
+      background: #eee; color: #333; padding: 4px 8px; border-radius: 4px; 
+      font-size: 0.75rem; font-weight: bold; cursor: pointer;
+      transition: background 0.2s;
     }
+    .tag:hover { background: #ddd; }
   </style>
 </head>
 <body>
@@ -74,62 +167,133 @@
   </div>
 
   <main>
-    <h1>Community Streamers</h1>
+    <h1>Highlighted Streamers</h1>
     <p>Our top recommended content creators.</p>
 
-    <div class="yearbook-grid">
-
-      <div class="yearbook-card">
-        <img src="https://media1.tenor.com/m/XPT5nUEaYzcAAAAC/standing-kitty.gif" alt="Streamer 1" class="img-trigger" data-video="videos/lapsclip.mp4">
+    <div class="scene">
+      <div class="carousel-cylinder" id="cylinder">
         
-        <div class="card-text">
-          <h3>Laps</h3>
-          <p>Top rising streamer</p>
-          
-          <div class="extra-info">
-            <p>Loves interacting with chat and playing variety games.</p>
-            <div class="tags">
-              <span class="tag">Chatty (12x)</span>
-              <span class="tag">Minecraft (8x)</span>
+        <div class="yearbook-card">
+          <div class="img-container">
+            <img src="https://media1.tenor.com/m/XPT5nUEaYzcAAAAC/standing-kitty.gif" alt="Streamer 1" class="img-trigger" data-video="videos/lapsclip.mp4">
+          </div>
+          <div class="card-text">
+            <h3>Laps</h3>
+            <p>Top rising streamer</p>
+            <div class="extra-info">
+              <p style="margin-bottom: 12px; color: #444;">Loves interacting with chat and playing variety games.</p>
+              <div class="tags-title">🔥 Vibe Check</div>
+              <div class="tags">
+                <span class="tag">Chatty (12x)</span>
+                <span class="tag">Minecraft (8x)</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="yearbook-card">
-        <img src="https://via.placeholder.com/300" alt="Streamer 2" class="img-trigger" data-video="videos/annen_video.mp4">
-        
-        <div class="card-text">
-          <h3>Beeva</h3>
-          <p>Top viewer of the month</p>
-          
-          <div class="extra-info">
-            <p>Master builder and community guide.</p>
-            <div class="tags">
-              <span class="tag">Builder (25x)</span>
-              <span class="tag">Norwegian (10x)</span>
+        <div class="yearbook-card">
+          <div class="img-container">
+            <img src="https://via.placeholder.com/300/ff7c7c" alt="Streamer 2" class="img-trigger" data-video="videos/annen_video.mp4">
+          </div>
+          <div class="card-text">
+            <h3>Beeva</h3>
+            <p>Top viewer of the month</p>
+            <div class="extra-info">
+              <p style="margin-bottom: 12px; color: #444;">Master builder and community guide.</p>
+              <div class="tags-title">🔥 Vibe Check</div>
+              <div class="tags">
+                <span class="tag">Builder (25x)</span>
+                <span class="tag">Norwegian (10x)</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
+        <div class="yearbook-card">
+          <div class="img-container">
+            <img src="https://via.placeholder.com/300/7cff7c" alt="Streamer 3" class="img-trigger" data-video="videos/test3.mp4">
+          </div>
+          <div class="card-text">
+            <h3>RabbitKing</h3>
+            <p>Speedrun Legend</p>
+            <div class="extra-info">
+              <p style="margin-bottom: 12px; color: #444;">Holds 3 world records in retro games.</p>
+              <div class="tags-title">🔥 Vibe Check</div>
+              <div class="tags">
+                <span class="tag">Sweaty (40x)</span>
+                <span class="tag">Retro (15x)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="yearbook-card">
+          <div class="img-container">
+            <img src="https://via.placeholder.com/300/7c7cff" alt="Streamer 4" class="img-trigger" data-video="videos/test4.mp4">
+          </div>
+          <div class="card-text">
+            <h3>Samson</h3>
+            <p>Community Founder</p>
+            <div class="extra-info">
+              <p style="margin-bottom: 12px; color: #444;">The one who brought everyone together.</p>
+              <div class="tags-title">🔥 Vibe Check</div>
+              <div class="tags">
+                <span class="tag">Leader (99x)</span>
+                <span class="tag">Chill (50x)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div>
     </div>
   </main>
 
   <script>
-    // 1. Setup
+    /* ====================================================
+       MAGIEN SOM BYGGER 3D SYLINDEREN AUTOMATISK
+       ==================================================== */
+    const cylinder = document.getElementById('cylinder');
+    // Henter alle kortene du har limt inn
+    const cards = Array.from(cylinder.querySelectorAll('.yearbook-card'));
+    const numCards = cards.length;
+
+    // Regner ut vinkelen basert på antall kort
+    const theta = 360 / numCards;
+    
+    // Regner ut hvor stor sirkelen må være for at kortene ikke skal krasje
+    // Sikrer en minimum radius på 250px hvis du har veldig få kort
+    const radius = Math.max(250, Math.round((280 / 2) / Math.tan(Math.PI / numCards)));
+
+    // Pakker hvert kort inn i en 3D-posisjonering og plasserer dem i sirkelen
+    cards.forEach((card, index) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'cylinder-item';
+      
+      const angle = theta * index;
+      wrapper.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+      
+      wrapper.appendChild(card);
+      cylinder.appendChild(wrapper);
+    });
+
+    /* ====================================================
+       VIDEO TRIGGER (Samme gode kode som før)
+       ==================================================== */
     const triggers = document.querySelectorAll('.img-trigger');
     const overlay = document.getElementById('overlay');
     const video = document.getElementById('popupVideo');
     const source = document.getElementById('videoSource');
 
-    // 2. Video triggers
     triggers.forEach(img => {
       img.addEventListener('mouseenter', () => {
-        source.src = img.getAttribute('data-video');
-        video.load(); 
-        overlay.classList.add('active'); 
-        video.play(); 
+        const vSrc = img.getAttribute('data-video');
+        if (vSrc) {
+          source.src = vSrc;
+          video.load(); 
+          overlay.classList.add('active'); 
+          video.play();
+        }
       });
 
       img.addEventListener('mouseleave', () => {

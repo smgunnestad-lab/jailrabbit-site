@@ -3,131 +3,127 @@
 <head>
   <meta charset="UTF-8" />
   <title>Recommended - JailRabbit</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
+    /*====== FONT & BASE ======*/
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0f1220;
+      color: #f5f5f5;
+      margin: 0;
+      padding-top: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main { text-align: center; width: 100%; max-width: 1200px; padding: 0 20px; box-sizing: border-box; }
+
+    /*====== NAVBAR ======*/
+    .navbar {
+      position: fixed; top: 0; left: 0; width: 100%;
+      background: #11152a; display: flex; flex-wrap: wrap; 
+      justify-content: space-between; align-items: center;
+      padding: 1rem 2rem; box-sizing: border-box;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 1000;
+    }
+    .logo { font-weight: 800; font-size: 1.2rem; margin-right: 20px; }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; }
+    .nav-links a { color: white; text-decoration: none; font-weight: 600; white-space: nowrap; transition: color 0.2s; }
+    .nav-links a:hover { color: #7c7cff; }
+
     /*====== OVERLAY ======*/
     .flicker-fix-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85); 
-      display: flex; justify-content: center; align-items: center;
-      z-index: 2000;
-      opacity: 0; visibility: hidden; 
-      transition: opacity 0.3s ease; 
-      pointer-events: none; 
+      background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center;
+      z-index: 2000; opacity: 0; visibility: hidden; 
+      transition: opacity 0.3s ease; pointer-events: none; 
     }
     .flicker-fix-overlay.active { opacity: 1; visibility: visible; }
     .flicker-fix-overlay video {
-      width: 80%; max-width: 600px;
-      border-radius: 8px; border: 4px solid white;
+      width: 80%; max-width: 600px; border-radius: 8px; border: 4px solid white;
       box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
 
     /*====== 3D SCENE ======*/
     .scene {
-      width: 100%;
-      height: 650px; 
-      perspective: 1200px; 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 60px; 
-      overflow: hidden; 
+      width: 100%; height: 650px; perspective: 1200px; 
+      display: flex; justify-content: center; align-items: center;
+      margin-top: 120px; /* Flyttet ned for å unngå kutting */
+      overflow: visible; 
     }
 
     .carousel-cylinder {
-      width: 260px; 
-      height: 100%;
-      position: relative;
+      width: 260px; height: 100%; position: relative;
       transform-style: preserve-3d; 
-      /* Animasjonen styres nå av JavaScript for å kunne "snappe" tilbake */
     }
 
     .cylinder-item {
-      position: absolute;
-      top: 80px; 
-      left: 0;
-      width: 260px;
-      transform-style: preserve-3d;
-      backface-visibility: hidden; 
+      position: absolute; top: 20px; left: 0; width: 260px;
+      transform-style: preserve-3d; backface-visibility: hidden; 
     }
 
     /*====== CARD DESIGN ======*/
     .yearbook-card {
-      background: white;
-      padding: 15px 15px 40px 15px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-      border-radius: 6px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #333;
+      background: white; padding: 15px 15px 40px 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5); border-radius: 6px;
+      display: flex; flex-direction: column; align-items: center; color: #333;
       transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
-      transform: scale(1) translateZ(0);
-      backface-visibility: hidden; 
+      transform: scale(1) translateZ(0); backface-visibility: hidden; 
     }
-
     .yearbook-card:hover { 
       transform: scale(1.15) translateZ(50px); 
-      box-shadow: 0 20px 40px rgba(0,0,0,0.9);
-      z-index: 100; 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.9); z-index: 100; 
     }
 
-    /*====== IMAGE & ZOOM ======*/
-    .img-container {
-      width: 100%;
-      height: 180px;
-      overflow: hidden;
-      border-bottom: 1px solid #eee;
-    }
+    /*====== IMAGE ======*/
+    .img-container { width: 100%; height: 180px; overflow: hidden; border-bottom: 1px solid #eee; }
+    .img-container img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; transition: transform 0.4s ease; }
+    .yearbook-card:hover .img-container img { transform: scale(1.08); }
 
-    .img-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      cursor: pointer;
-      transition: transform 0.4s ease;
-    }
-
-    .yearbook-card:hover .img-container img {
-      transform: scale(1.08); 
-    }
-
-    /*====== TEXT & INFO ======*/
+    /*====== TEXT & TAGS ======*/
     .card-text { margin-top: 15px; text-align: center; width: 100%; }
-    .card-text h3 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
-    .card-text p { margin: 5px 0 0; font-family: serif; font-style: italic; color: #666; }
+    .card-text h3 { margin: 0; font-size: 1.2rem; font-weight: 800; text-transform: uppercase; }
+    .card-text p { margin: 5px 0 0; font-weight: 400; color: #666; }
+    .extra-info { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.4s ease; font-size: 0.85rem; }
+    .yearbook-card:hover .extra-info { max-height: 250px; opacity: 1; margin-top: 15px; }
+    .tags-title { font-size: 0.75rem; text-transform: uppercase; color: #888; font-weight: 800; margin-bottom: 5px; letter-spacing: 1px; }
+    .tags { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
+    .tag { background: #eee; color: #333; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; transition: background 0.2s; }
 
-    .extra-info {
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      transition: all 0.4s ease;
-      font-size: 0.85rem;
+    /*====== STATIC GRID (PUSH-EFFECT) ======*/
+    .all-streamers-title { margin-top: 100px; font-size: 2rem; font-weight: 800; }
+    .static-rows {
+      display: flex; flex-direction: column; gap: 15px; margin-top: 30px; margin-bottom: 100px; width: 100%;
+    }
+    .static-row {
+      display: flex; gap: 10px; width: 100%; height: 140px;
+    }
+    .static-card {
+      flex: 1; /* Alle deler plassen likt */
+      position: relative; overflow: hidden; border-radius: 8px; cursor: pointer;
+      transition: flex 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s ease, box-shadow 0.4s ease;
+      background: #161a33; border: 2px solid #2a2d3e; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 10px;
+    }
+    .static-card img {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: opacity 0.4s;
+    }
+    .static-card h4 {
+      position: relative; z-index: 2; margin: 0; color: white; font-weight: 800; text-shadow: 0 2px 5px rgba(0,0,0,0.8);
     }
     
-    .yearbook-card:hover .extra-info {
-      max-height: 250px; 
-      opacity: 1;
-      margin-top: 15px;
+    /* Dytter de andre til siden og forstørrer seg */
+    .static-row:hover .static-card { opacity: 0.5; } /* Dimer de andre */
+    .static-row .static-card:hover {
+      flex: 2.5; /* Krever mer plass = dytter naboene */
+      transform: scale(1.05); /* Popper ut */
+      opacity: 1; 
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6); border-color: #7c7cff; z-index: 10;
     }
-
-    /*====== TAGS ======*/
-    .tags-title {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      color: #888;
-      font-weight: bold;
-      margin-bottom: 5px;
-      letter-spacing: 1px;
-    }
-
-    .tags { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
-    .tag {
-      background: #eee; color: #333; padding: 4px 8px; border-radius: 4px; 
-      font-size: 0.75rem; font-weight: bold; cursor: pointer;
-      transition: background 0.2s;
-    }
-    .tag:hover { background: #ddd; }
+    .static-card:hover img { opacity: 1; }
   </style>
 </head>
 <body>
@@ -156,80 +152,29 @@
     <div class="scene">
       <div class="carousel-cylinder" id="cylinder">
         
-        <div class="yearbook-card">
-          <div class="img-container">
-            <img src="https://media1.tenor.com/m/XPT5nUEaYzcAAAAC/standing-kitty.gif" alt="Streamer 1" class="img-trigger" data-video="videos/lapsclip.mp4">
-          </div>
-          <div class="card-text">
-            <h3>Laps</h3>
-            <p>Top rising streamer</p>
-            <div class="extra-info">
-              <p style="margin-bottom: 12px; color: #444;">Loves interacting with chat and playing variety games.</p>
-              <div class="tags-title">🔥 Vibe Check</div>
-              <div class="tags">
-                <span class="tag">Chatty (12x)</span>
-                <span class="tag">Minecraft (8x)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="yearbook-card">
-          <div class="img-container">
-            <img src="https://via.placeholder.com/300/ff7c7c" alt="Streamer 2" class="img-trigger" data-video="videos/annen_video.mp4">
-          </div>
-          <div class="card-text">
-            <h3>Beeva</h3>
-            <p>Top viewer of the month</p>
-            <div class="extra-info">
-              <p style="margin-bottom: 12px; color: #444;">Master builder and community guide.</p>
-              <div class="tags-title">🔥 Vibe Check</div>
-              <div class="tags">
-                <span class="tag">Builder (25x)</span>
-                <span class="tag">Norwegian (10x)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="yearbook-card">
-          <div class="img-container">
-            <img src="https://via.placeholder.com/300/7cff7c" alt="Streamer 3" class="img-trigger" data-video="videos/test3.mp4">
-          </div>
-          <div class="card-text">
-            <h3>RabbitKing</h3>
-            <p>Speedrun Legend</p>
-            <div class="extra-info">
-              <p style="margin-bottom: 12px; color: #444;">Holds 3 world records in retro games.</p>
-              <div class="tags-title">🔥 Vibe Check</div>
-              <div class="tags">
-                <span class="tag">Sweaty (40x)</span>
-                <span class="tag">Retro (15x)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="yearbook-card">
-          <div class="img-container">
-            <img src="https://via.placeholder.com/300/7c7cff" alt="Streamer 4" class="img-trigger" data-video="videos/test4.mp4">
-          </div>
-          <div class="card-text">
-            <h3>Samson</h3>
-            <p>Community Founder</p>
-            <div class="extra-info">
-              <p style="margin-bottom: 12px; color: #444;">The one who brought everyone together.</p>
-              <div class="tags-title">🔥 Vibe Check</div>
-              <div class="tags">
-                <span class="tag">Leader (99x)</span>
-                <span class="tag">Chill (50x)</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="yearbook-card"><div class="img-container"><img src="https://media1.tenor.com/m/XPT5nUEaYzcAAAAC/standing-kitty.gif" alt="Streamer" class="img-trigger" data-video="videos/lapsclip.mp4"></div><div class="card-text"><h3>Laps</h3><p>Top rising streamer</p><div class="extra-info"><div class="tags-title">🔥 Vibe Check</div><div class="tags"><span class="tag">Chatty (12x)</span></div></div></div></div>
+        
+        <div class="yearbook-card"><div class="img-container"><img src="https://via.placeholder.com/300/ff7c7c" alt="Streamer" class="img-trigger" data-video="videos/annen_video.mp4"></div><div class="card-text"><h3>Beeva</h3><p>Top viewer</p><div class="extra-info"><div class="tags-title">🔥 Vibe Check</div><div class="tags"><span class="tag">Builder (25x)</span></div></div></div></div>
+        
+        <div class="yearbook-card"><div class="img-container"><img src="https://via.placeholder.com/300/7cff7c" alt="Streamer" class="img-trigger" data-video="videos/test.mp4"></div><div class="card-text"><h3>RabbitKing</h3><p>Speedrun Legend</p><div class="extra-info"><div class="tags-title">🔥 Vibe Check</div><div class="tags"><span class="tag">Sweaty (40x)</span></div></div></div></div>
+        
+        <div class="yearbook-card"><div class="img-container"><img src="https://via.placeholder.com/300/7c7cff" alt="Streamer" class="img-trigger" data-video="videos/test.mp4"></div><div class="card-text"><h3>Samson</h3><p>Founder</p><div class="extra-info"><div class="tags-title">🔥 Vibe Check</div><div class="tags"><span class="tag">Leader (99x)</span></div></div></div></div>
+        
+        <div class="yearbook-card"><div class="img-container"><img src="https://via.placeholder.com/300/ffff7c" alt="Streamer" class="img-trigger" data-video="videos/test.mp4"></div><div class="card-text"><h3>Ghost</h3><p>Late night vibes</p><div class="extra-info"><div class="tags-title">🔥 Vibe Check</div><div class="tags"><span class="tag">Chill (15x)</span></div></div></div></div>
+        
+        <div class="yearbook-card"><div class="img-container"><img src="https://via.placeholder.com/300/ff7cff" alt="Streamer" class="img-trigger" data-video="videos/test.mp4"></div><div class="card-text"><h3>Pixel</h3><p>Art Streamer</p><div class="extra-info"><div class="tags-title">🔥 Vibe Check</div><div class="tags"><span class="tag">Creative (30x)</span></div></div></div></div>
+        
+        <div class="yearbook-card"><div class="img-container"><img src="https://via.placeholder.com/300/7cffff" alt="Streamer" class="img-trigger" data-video="videos/test.mp4"></div><div class="card-text"><h3>Ninja</h3><p>FPS God</p><div class="extra-info"><div class="tags-title">🔥 Vibe Check</div><div class="tags"><span class="tag">AimBot (80x)</span></div></div></div></div>
+        
+        <div class="yearbook-card"><div class="img-container"><img src="https://via.placeholder.com/300/333333" alt="Streamer" class="img-trigger" data-video="videos/test.mp4"></div><div class="card-text"><h3>Zero</h3><p>Variety</p><div class="extra-info"><div class="tags-title">🔥 Vibe Check</div><div class="tags"><span class="tag">Funny (22x)</span></div></div></div></div>
 
       </div>
     </div>
+
+    <h2 class="all-streamers-title">All Streamers</h2>
+    <div class="static-rows" id="staticRowsContainer">
+      </div>
+
   </main>
 
   <script>
@@ -238,41 +183,36 @@
     const cards = Array.from(cylinder.querySelectorAll('.yearbook-card'));
     const numCards = cards.length;
     const theta = 360 / numCards;
-    const radius = Math.max(350, Math.round((300 / 2) / Math.tan(Math.PI / numCards))) + 20;
+    const radius = Math.max(350, Math.round((280 / 2) / Math.tan(Math.PI / numCards))) + 20;
 
     cards.forEach((card, index) => {
       const wrapper = document.createElement('div');
       wrapper.className = 'cylinder-item';
-      const angle = theta * index;
-      wrapper.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+      wrapper.style.transform = `rotateY(${theta * index}deg) translateZ(${radius}px)`;
       wrapper.appendChild(card);
       cylinder.appendChild(wrapper);
     });
 
-    /*====== SMART ROTATION ENGINE ======*/
+    /*====== SMART ROTATION ======*/
     let currentAngle = 0;
     let isHovered = false;
     let snapTimeout;
 
     function spin() {
       if (!isHovered) {
-        currentAngle -= 0.15; // Juster farten her (lavere tall = saktere)
+        currentAngle -= 0.15; 
         cylinder.style.transform = `rotateY(${currentAngle}deg)`;
       }
       requestAnimationFrame(spin);
     }
-    spin(); // Starter den evige loopen
+    spin(); 
 
     cards.forEach((card, index) => {
-      // Når musen treffer hele kortet: Snap til midten
       card.addEventListener('mouseenter', () => {
         isHovered = true;
         clearTimeout(snapTimeout);
-        
-        // Legger på en myk animasjon for "snappet"
         cylinder.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
         
-        // Finner den korteste veien tilbake til midten for dette spesifikke kortet
         const targetAngle = -(theta * index);
         let diff = (targetAngle - currentAngle) % 360;
         if (diff > 180) diff -= 360;
@@ -283,10 +223,9 @@
       });
 
       card.addEventListener('mouseleave', () => {
-        // Venter til "snap"-animasjonen er ferdig før den begynner å spinne igjen
         snapTimeout = setTimeout(() => {
           isHovered = false;
-          cylinder.style.transition = 'none'; // Fjerner CSS-animasjon slik at JS-spinn blir smooth
+          cylinder.style.transition = 'none'; 
         }, 500); 
       });
     });
@@ -298,22 +237,38 @@
     const source = document.getElementById('videoSource');
 
     triggers.forEach(img => {
-      // Når musen treffer KUN bildet: Spill video
       img.addEventListener('mouseenter', () => {
         const vSrc = img.getAttribute('data-video');
         if (vSrc) {
-          source.src = vSrc;
-          video.load(); 
-          overlay.classList.add('active'); 
-          video.play();
+          source.src = vSrc; video.load(); 
+          overlay.classList.add('active'); video.play();
         }
       });
-
       img.addEventListener('mouseleave', () => {
-        overlay.classList.remove('active'); 
-        video.pause(); 
+        overlay.classList.remove('active'); video.pause(); 
       });
     });
+
+    /*====== AUTO-GENERATE STATIC GRID ======*/
+    const staticContainer = document.getElementById('staticRowsContainer');
+    let streamerCount = 1;
+
+    for (let r = 0; r < 4; r++) {
+      const row = document.createElement('div');
+      row.className = 'static-row';
+      
+      for (let c = 0; c < 8; c++) {
+        const card = document.createElement('div');
+        card.className = 'static-card';
+        card.innerHTML = `
+          <img src="https://via.placeholder.com/200/2a2d3e/7c7cff?text=Streamer+${streamerCount}" alt="Streamer">
+          <h4>Streamer ${streamerCount}</h4>
+        `;
+        row.appendChild(card);
+        streamerCount++;
+      }
+      staticContainer.appendChild(row);
+    }
   </script>
 </body>
 </html>

@@ -5,9 +5,7 @@
   <title>Recommended - JailRabbit</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* -------------------------------------
-       1. OVERLAY (For video/flimmerfiks)
-       ------------------------------------- */
+    /*====== OVERLAY ======*/
     .flicker-fix-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.85); 
@@ -24,50 +22,36 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
 
-    /* -------------------------------------
-       2. 3D SYLINDER SCENE
-       ------------------------------------- */
+    /*====== 3D SCENE ======*/
     .scene {
       width: 100%;
-      height: 600px; /* Gir plass til at kortene kan utvide seg nedover */
-      perspective: 1200px; /* Skaper dybden i 3D-rommet */
+      height: 650px; 
+      perspective: 1200px; 
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-top: 20px;
-      overflow: hidden; /* Skjuler det som går for langt ut på sidene */
+      margin-top: 60px; 
+      overflow: hidden; 
     }
 
     .carousel-cylinder {
-      width: 260px; /* Bredden på selve sporet */
+      width: 260px; 
       height: 100%;
       position: relative;
-      transform-style: preserve-3d; /* Sier at barna skal leve i et 3D-rom */
-      animation: spinCylinder 25s infinite linear; /* Snurrer evig */
+      transform-style: preserve-3d; 
+      /* Animasjonen styres nå av JavaScript for å kunne "snappe" tilbake */
     }
 
-    /* Stopper roteringen når musen er på karusellen */
-    .carousel-cylinder:hover {
-      animation-play-state: paused;
-    }
-
-    @keyframes spinCylinder {
-      from { transform: rotateY(0deg); }
-      to { transform: rotateY(-360deg); }
-    }
-
-    /* Hver posisjon i sylinderen (JS styrer vinkelen) */
     .cylinder-item {
       position: absolute;
-      top: 50px; /* Startposisjon fra toppen av scenen */
+      top: 80px; 
       left: 0;
       width: 260px;
       transform-style: preserve-3d;
+      backface-visibility: hidden; 
     }
 
-    /* -------------------------------------
-       3. KORT-DESIGN & HOVER EFFEKTER
-       ------------------------------------- */
+    /*====== CARD DESIGN ======*/
     .yearbook-card {
       background: white;
       padding: 15px 15px 40px 15px;
@@ -77,19 +61,18 @@
       flex-direction: column;
       align-items: center;
       color: #333;
-      
-      /* Animeringen når kortet "popper ut" i 3D */
       transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
       transform: scale(1) translateZ(0);
+      backface-visibility: hidden; 
     }
 
-    /* Når man hovrer over kortet, popper det frem, mens sylinderen står stille */
     .yearbook-card:hover { 
       transform: scale(1.15) translateZ(50px); 
       box-shadow: 0 20px 40px rgba(0,0,0,0.9);
-      z-index: 100; /* Legger seg foran de andre */
+      z-index: 100; 
     }
 
+    /*====== IMAGE & ZOOM ======*/
     .img-container {
       width: 100%;
       height: 180px;
@@ -105,12 +88,11 @@
       transition: transform 0.4s ease;
     }
 
-    /* Bildet får en liten ekstra zoom inni rammen */
     .yearbook-card:hover .img-container img {
       transform: scale(1.08); 
     }
 
-    /* Tekst, tags og skjult info */
+    /*====== TEXT & INFO ======*/
     .card-text { margin-top: 15px; text-align: center; width: 100%; }
     .card-text h3 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
     .card-text p { margin: 5px 0 0; font-family: serif; font-style: italic; color: #666; }
@@ -129,6 +111,7 @@
       margin-top: 15px;
     }
 
+    /*====== TAGS ======*/
     .tags-title {
       font-size: 0.75rem;
       text-transform: uppercase;
@@ -245,47 +228,77 @@
           </div>
         </div>
 
-        </div>
+      </div>
     </div>
   </main>
 
   <script>
-    /* ====================================================
-       MAGIEN SOM BYGGER 3D SYLINDEREN AUTOMATISK
-       ==================================================== */
+    /*====== 3D BUILDER ======*/
     const cylinder = document.getElementById('cylinder');
-    // Henter alle kortene du har limt inn
     const cards = Array.from(cylinder.querySelectorAll('.yearbook-card'));
     const numCards = cards.length;
-
-    // Regner ut vinkelen basert på antall kort
     const theta = 360 / numCards;
-    
-    // Regner ut hvor stor sirkelen må være for at kortene ikke skal krasje
-    // Sikrer en minimum radius på 250px hvis du har veldig få kort
-    const radius = Math.max(250, Math.round((280 / 2) / Math.tan(Math.PI / numCards)));
+    const radius = Math.max(350, Math.round((300 / 2) / Math.tan(Math.PI / numCards))) + 20;
 
-    // Pakker hvert kort inn i en 3D-posisjonering og plasserer dem i sirkelen
     cards.forEach((card, index) => {
       const wrapper = document.createElement('div');
       wrapper.className = 'cylinder-item';
-      
       const angle = theta * index;
       wrapper.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
-      
       wrapper.appendChild(card);
       cylinder.appendChild(wrapper);
     });
 
-    /* ====================================================
-       VIDEO TRIGGER (Samme gode kode som før)
-       ==================================================== */
+    /*====== SMART ROTATION ENGINE ======*/
+    let currentAngle = 0;
+    let isHovered = false;
+    let snapTimeout;
+
+    function spin() {
+      if (!isHovered) {
+        currentAngle -= 0.15; // Juster farten her (lavere tall = saktere)
+        cylinder.style.transform = `rotateY(${currentAngle}deg)`;
+      }
+      requestAnimationFrame(spin);
+    }
+    spin(); // Starter den evige loopen
+
+    cards.forEach((card, index) => {
+      // Når musen treffer hele kortet: Snap til midten
+      card.addEventListener('mouseenter', () => {
+        isHovered = true;
+        clearTimeout(snapTimeout);
+        
+        // Legger på en myk animasjon for "snappet"
+        cylinder.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+        
+        // Finner den korteste veien tilbake til midten for dette spesifikke kortet
+        const targetAngle = -(theta * index);
+        let diff = (targetAngle - currentAngle) % 360;
+        if (diff > 180) diff -= 360;
+        if (diff < -180) diff += 360;
+        
+        currentAngle += diff;
+        cylinder.style.transform = `rotateY(${currentAngle}deg)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        // Venter til "snap"-animasjonen er ferdig før den begynner å spinne igjen
+        snapTimeout = setTimeout(() => {
+          isHovered = false;
+          cylinder.style.transition = 'none'; // Fjerner CSS-animasjon slik at JS-spinn blir smooth
+        }, 500); 
+      });
+    });
+
+    /*====== VIDEO TRIGGER ======*/
     const triggers = document.querySelectorAll('.img-trigger');
     const overlay = document.getElementById('overlay');
     const video = document.getElementById('popupVideo');
     const source = document.getElementById('videoSource');
 
     triggers.forEach(img => {
+      // Når musen treffer KUN bildet: Spill video
       img.addEventListener('mouseenter', () => {
         const vSrc = img.getAttribute('data-video');
         if (vSrc) {

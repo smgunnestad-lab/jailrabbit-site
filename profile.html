@@ -41,14 +41,14 @@
     }
     .btn-submit:hover { background: #ccc; }
     
-    /* Register & Forgot Password linker */
+    /* Register & Forgot Password linker | Needs work, problem with remebering account */
     .auth-links {
       display: flex; justify-content: space-between; margin-top: 15px; font-size: 0.85rem;
     }
     .auth-links a { color: #888; text-decoration: none; cursor: pointer; transition: color 0.2s; }
     .auth-links a:hover { color: #fff; }
 
-    /* Divider (Connect account) */
+    /* Divider (Connect account) | Problem with pop up sign in */
     .divider {
       display: flex; align-items: center; text-align: center; margin: 30px 0; 
       color: #666; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
@@ -57,7 +57,7 @@
     .divider::before { margin-right: 15px; }
     .divider::after { margin-left: 15px; }
 
-    /* Sosiale ikoner */
+    /* Icons for sign in | Should add more */
     .social-icons { display: flex; justify-content: center; gap: 15px; }
     .social-icon {
       width: 45px; height: 45px; background: #111; border: 1px solid #444; 
@@ -95,7 +95,7 @@
     checkAuthState((user) => {
       if (user) {
         //====== LOGGET INN ======//
-        // Hvis brukeren registrerte seg med e-post, har de kanskje ikke et profilbilde ennå
+        // Hvis brukeren registrerte seg med e-post, har de kanskje ikke et profilbilde ennå | Må fikses på
         const photo = user.photoURL || "https://via.placeholder.com/100/333333/ffffff?text=User";
         const name = user.displayName || "Rabbit Member";
 

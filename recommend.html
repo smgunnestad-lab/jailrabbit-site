@@ -214,6 +214,7 @@
       <a href="whiteboard.html">Whiteboard</a>
       <a href="recommend.html" style="color: #7c7cff;">Recommended</a>
     </nav>
+    <div id="auth-container"></div>
   </header>
 
   <div class="flicker-fix-overlay" id="overlay">
@@ -393,6 +394,25 @@
   </main>
 
   /*====== 3D BUILDER ======*/
+  <script type="module">
+  import { login, checkAuthState, logout } from './auth.js';
+
+  window.login = login;
+  window.logout = logout;
+
+    checkAuthState((user) => {
+    const authContainer = document.getElementById('auth-container');
+    if (user) {
+      authContainer.innerHTML = `
+        <a href="profile.html">Hei, ${user.displayName}</a>
+        <button onclick="logout()">Logg ut</button>
+      `;
+    } else {
+      authContainer.innerHTML = `<button onclick="login()">Logg inn med Google</button>`;
+    }
+  });
+</script>
+  
   <script type="module">
   //=== Firebase-verktøyene ===//
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";

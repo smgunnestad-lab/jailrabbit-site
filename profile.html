@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Profile - JailRabbit</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <h1>My Profile</h1>
+    <div id="profile-content">
+      <p>Loading profile...</p>
+    </div>
+    <button id="logoutBtn">Log out</button>
+  </main>
+
+  <script type="module">
+    import { checkAuthState, logout } from './auth.js';
+
+    checkAuthState((user) => {
+      const container = document.getElementById('profile-content');
+      if (user) {
+        container.innerHTML = `
+          <img src="${user.photoURL}" width="100">
+          <h2>${user.displayName}</h2>
+          <p>E-post: ${user.email}</p>
+        `;
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+  </script>
+</body>
+</html>

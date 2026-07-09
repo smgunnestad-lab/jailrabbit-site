@@ -1,30 +1,52 @@
-<script type="module">
-  import { checkAuthState, logout, login } from './auth.js';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Profile - JailRabbit</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <h1>My Profile</h1>
+    <div id="profile-content">
+      <p>Loading profile...</p>
+    </div>
+    <!-- Knappen er her, vi styrer visningen av den via JavaScript -->
+    <button id="logoutBtn" style="display: none;">Log out</button>
+  </main>
 
-  const container = document.getElementById('profile-content');
-  const logoutBtn = document.getElementById('logoutBtn');
+  <script type="module">
+    import { checkAuthState, logout, login } from './auth.js';
 
-  checkAuthState((user) => {
-    if (user) {
-      // Bruker er logget inn
-      container.innerHTML = `
-        <img src="${user.photoURL}" width="100" style="border-radius:50%">
-        <h2>${user.displayName}</h2>
-        <p>E-post: ${user.email}</p>
-      `;
-      logoutBtn.style.display = 'block';
-    } else {
-      // Bruker er IKKE logget inn - vis innloggingsknapp
-      container.innerHTML = `<p>Du må logge inn for å se profilen din.</p>`;
-      const loginBtn = document.createElement('button');
-      loginBtn.innerText = "Logg inn med Google";
-      loginBtn.onclick = () => login().then(() => window.location.reload());
-      container.appendChild(loginBtn);
-      logoutBtn.style.display = 'none';
-    }
-  });
+    const container = document.getElementById('profile-content');
+    const logoutBtn = document.getElementById('logoutBtn');
 
-  logoutBtn.addEventListener('click', () => {
-    logout().then(() => window.location.href = 'index.html');
-  });
-</script>
+    checkAuthState((user) => {
+      if (user) {
+        // Bruker er logget inn
+        container.innerHTML = `
+          <img src="${user.photoURL}" width="100" style="border-radius:50%">
+          <h2>${user.displayName}</h2>
+          <p>E-post: ${user.email}</p>
+        `;
+        logoutBtn.style.display = 'block';
+      } else {
+        // Bruker er IKKE logget inn
+        container.innerHTML = `<p>Du må logge inn for å se profilen din.</p>`;
+        
+        const loginBtn = document.createElement('button');
+        loginBtn.innerText = "Logg inn med Google";
+        loginBtn.className = "btn"; // Bruker din eksisterende CSS-klasse
+        loginBtn.onclick = () => login().then(() => window.location.reload());
+        
+        container.appendChild(loginBtn);
+        logoutBtn.style.display = 'none';
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      logout().then(() => window.location.href = 'index.html');
+    });
+  </script>
+</body>
+</html>

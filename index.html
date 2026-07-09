@@ -10,7 +10,7 @@
   <header class="navbar">
     <div class="logo">🐇 JailRabbit</div>
     <nav class="nav-links">
-      <a href="index.html" style="color: #7c7cff;">Recommended</a>>Home</a>
+      <a href="index.html" style="color: #7c7cff;">Home</a>
       <a href="trips.html">Trips</a>
       <a href="events.html">Events</a>
       <a href="whiteboard.html">Whiteboard</a>
@@ -23,7 +23,6 @@
       <h1>🐇 JailRabbit</h1>
       <p>The official website for the JailRabbit community.</p>
 
-      <!-- Alle knapper samlet -->
       <div class="buttons">
         <a class="btn" href="https://discord.gg/jailrabbit" target="_blank">Join the Discord community</a>
         <a class="btn" href="https://jailrabbittravels.com/" target="_blank">Trip planning</a>
@@ -33,30 +32,29 @@
       </div>
     </div>
 
-    <!-- Bilde- og Videokarusell (Slider) -->
     <section class="carousel-section">
       <h2>Community Highlights</h2>
-      <p style="color: #aaa; margin-bottom: 1rem;">Memories from Discord meetups and events!</p>
+      <p>Memories from Discord meetups and events!</p>
       
       <div class="carousel-container">
-        <!-- Piler for å bla -->
-        <button class="carousel-btn prev" id="prevBtn">&#10094;</button>
-        <button class="carousel-btn next" id="nextBtn">&#10095;</button>
-
-        <!-- Hvor selve bilde ligger -->
-        <div class="carousel-track" id="track">
+        <div class="carousel-track">
           
-          <!-- Bilde 1 -->
           <div class="carousel-slide">
             <img src="https://aktivioslo.no/wp-content/uploads/2018/09/Afterwork-Oslo.jpg?text=Community+Meetup+1" alt="Meetup 1">
           </div>
-          
-          <!-- Bilde 2 -->
           <div class="carousel-slide">
             <img src="https://via.placeholder.com/800x400/2a2d3e/ffffff?text=Game+Night" alt="Game Night">
           </div>
-          
-          <!-- Bilde 3 -->
+          <div class="carousel-slide">
+            <img src="https://via.placeholder.com/800x400/7c7cff/ffffff?text=Epic+Moments" alt="Epic Moments">
+          </div>
+
+          <div class="carousel-slide">
+            <img src="https://aktivioslo.no/wp-content/uploads/2018/09/Afterwork-Oslo.jpg?text=Community+Meetup+1" alt="Meetup 1">
+          </div>
+          <div class="carousel-slide">
+            <img src="https://via.placeholder.com/800x400/2a2d3e/ffffff?text=Game+Night" alt="Game Night">
+          </div>
           <div class="carousel-slide">
             <img src="https://via.placeholder.com/800x400/7c7cff/ffffff?text=Epic+Moments" alt="Epic Moments">
           </div>
@@ -65,39 +63,8 @@
       </div>
     </section>
 
-    <p class="small">Under development – more to come.</p>
+    <p style="margin-top: 40px; font-size: 0.85rem;">Under development – more to come.</p>
   </main>
-
-  <!-- Roll wheel left and right, fokus til venstre -->
-  <script>
-    const track = document.getElementById('track');
-    const slides = document.querySelectorAll('.carousel-slide');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    
-    let currentIndex = 0;
-
-    function updateCarousel() {
-      // Flytter "sporet" til venstre basert på hvilket bilde vi er på
-      track.style.transform = `translateX(-${currentIndex * 100}%)`;
-    }
-
-    nextBtn.addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % slides.length; // Går tilbake til start hvis vi er på slutten
-      updateCarousel();
-    });
-
-    prevBtn.addEventListener('click', () => {
-      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-      updateCarousel();
-    });
-
-    // blar automatisk til venstre vært 4. sekund
-    setInterval(() => {
-      currentIndex = (currentIndex + 1) % slides.length;
-      updateCarousel();
-    }, 4000);
-  </script>
 
 </body>
 </html>

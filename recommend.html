@@ -392,6 +392,31 @@
 
   </main>
 
+  /*====== 3D BUILDER ======*/
+  <script type="module">
+  //=== Firebase-verktøyene ===//
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  //*=== Firbase kode ===*//
+  const firebaseConfig = {
+  apiKey: "AIzaSyA78X3VQmbKB-3jnsbwo44k_3rmiOzLMIw",
+  authDomain: "jailrabbit-backend.firebaseapp.com",
+  projectId: "jailrabbit-backend",
+  storageBucket: "jailrabbit-backend.firebasestorage.app",
+  messagingSenderId: "746247741693",
+  appId: "1:746247741693:web:58f5f48f77b18970481e94"
+  };
+
+  //=== Start Firebase ===//
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  console.log("Firebase er vellykket koblet til!");
+</script>
+
   <script>
     /*====== 3D BUILDER ======*/
     const cylinder = document.getElementById('cylinder');

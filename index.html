@@ -5,6 +5,15 @@
   <title>JailRabbit - Home</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+<script type="module">
+  import { checkAuthState } from './auth.js';
+  checkAuthState((user) => {
+    const navLink = document.getElementById('nav-login-link');
+    if (navLink) {
+      navLink.innerText = user ? "My Profile" : "Log in";
+    }
+  });
+</script>
 <body>
   
   <header class="navbar">
@@ -15,7 +24,7 @@
       <a href="events.html">Events</a>
       <a href="whiteboard.html">Whiteboard</a>
       <a href="recommend.html">Recommended</a>
-      <a href="profile.html">Log in</a>
+      <a href="profile.html" id="nav-login-link">Log in</a>
     </nav>
   </header>
 

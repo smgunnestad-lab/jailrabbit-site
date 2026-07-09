@@ -4,48 +4,99 @@
   <meta charset="UTF-8" />
   <title>My Profile - JailRabbit</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Styling kun for profilsiden/login-boksen */
+    .profile-box {
+      background: #161a33;
+      border: 2px solid #2a2d3e;
+      padding: 40px;
+      border-radius: 12px;
+      margin-top: 50px;
+      display: inline-block;
+      min-width: 300px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .profile-box img {
+      border-radius: 50%;
+      border: 3px solid #7c7cff;
+      margin-bottom: 15px;
+    }
+    .login-options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
+<script type="module">
+  import { checkAuthState } from './auth.js';
+  checkAuthState((user) => {
+    const navLink = document.getElementById('nav-login-link');
+    if (navLink) {
+      navLink.innerText = user ? "My Profile" : "Log in";
+    }
+  });
+</script>
+
 <body>
+  
+  <header class="navbar">
+    <div class="logo">🐇 JailRabbit</div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="trips.html">Trips</a>
+      <a href="events.html">Events</a>
+      <a href="whiteboard.html">Whiteboard</a>
+      <a href="recommend.html">Recommended</a>
+      <a href="profile.html" style="color: #7c7cff;">Log in</a>
+    </nav>
+  </header>
+
   <main>
-    <h1>My Profile</h1>
-    <div id="profile-content">
-      <p>Loading profile...</p>
+    <div class="profile-box" id="profile-content">
+      <p>Sjekker status...</p>
     </div>
-    <!-- Knappen er her, vi styrer visningen av den via JavaScript -->
-    <button id="logoutBtn" style="display: none;">Log out</button>
   </main>
 
   <script type="module">
-    import { checkAuthState, logout, login } from './auth.js';
+    import { checkAuthState, logout, loginWithGoogle } from './auth.js';
 
     const container = document.getElementById('profile-content');
-    const logoutBtn = document.getElementById('logoutBtn');
 
     checkAuthState((user) => {
       if (user) {
-        // Bruker er logget inn
+        // --- LOGGET INN: Vis Profil ---
         container.innerHTML = `
-          <img src="${user.photoURL}" width="100" style="border-radius:50%">
+          <img src="${user.photoURL}" width="100" alt="Profilbilde">
           <h2>${user.displayName}</h2>
-          <p>E-post: ${user.email}</p>
+          <p style="color: #aaa; margin-bottom: 20px;">${user.email}</p>
+          <button id="logoutBtn" class="btn" style="background: #ff4c4c;">Log out</button>
         `;
-        logoutBtn.style.display = 'block';
+        // Legg til funksjon på logg ut-knappen
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+          logout().then(() => window.location.reload());
+        });
       } else {
-        // Bruker er IKKE logget inn
-        container.innerHTML = `<p>Du må logge inn for å se profilen din.</p>`;
-        
-        const loginBtn = document.createElement('button');
-        loginBtn.innerText = "Logg inn med Google";
-        loginBtn.className = "btn"; // Bruker din eksisterende CSS-klasse
-        loginBtn.onclick = () => login().then(() => window.location.reload());
-        
-        container.appendChild(loginBtn);
-        logoutBtn.style.display = 'none';
+        // --- IKKE LOGGET INN: Vis Sign In vindu ---
+        container.innerHTML = `
+          <h2>Sign In</h2>
+          <p style="color: #aaa;">Koble til for å stemme på streamere</p>
+          <div class="login-options">
+            <button id="googleLoginBtn" class="btn" style="background: #fff; color: #333;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="16" style="vertical-align: middle; border: none; margin: 0; margin-right: 8px;">
+              Sign in with Google
+            </button>
+            <!-- Disse knappene gjør ingenting ennå, men de ligger klare for fremtiden -->
+            <button class="btn" style="background: #5865F2; opacity: 0.5; cursor: not-allowed;">Sign in with Discord (Snart)</button>
+            <button class="btn" style="background: #9146FF; opacity: 0.5; cursor: not-allowed;">Sign in with Twitch (Snart)</button>
+          </div>
+        `;
+        // Legg til funksjon på Google-knappen
+        document.getElementById('googleLoginBtn').addEventListener('click', () => {
+          loginWithGoogle().then(() => window.location.reload());
+        });
       }
-    });
-
-    logoutBtn.addEventListener('click', () => {
-      logout().then(() => window.location.href = 'index.html');
     });
   </script>
 </body>

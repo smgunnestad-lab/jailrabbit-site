@@ -117,6 +117,15 @@
     }
   </style>
 </head>
+<script type="module">
+  import { checkAuthState } from './auth.js';
+  checkAuthState((user) => {
+    const navLink = document.getElementById('nav-login-link');
+    if (navLink) {
+      navLink.innerText = user ? "My Profile" : "Log in";
+    }
+  });
+</script>
 <body>
 
   <!-- Toppmenyen -->
@@ -128,6 +137,7 @@
         <a href="events.html">Events</a>
         <a href="whiteboard.html" style="color: white; border-bottom: 2px solid white;">Whiteboard</a>
         <a href="recommend.html">Recommended</a>
+        <a href="profile.html" id="nav-login-link">Log in</a>
       </div>
       
       <div style="display: flex; gap: 10px;">

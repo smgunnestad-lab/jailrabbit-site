@@ -1,19 +1,203 @@
 <!DOCTYPE html>
-<html lang="no">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Events – JailRabbit</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Follow the JailRabbit League of Legends and Valorant Ranked Race."
+  >
+  <title>Ranked Race | JailRabbit Events</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main>
-    <h1>🎉 Events</h1>
-    <p>Work in progress. 
-      We will be posting events and also take suggestions on events you would like.
-      Until we have a proper system prices will be put to the side.
-    </p>
+  <header class="navbar">
+    <div class="logo">🐇 JailRabbit</div>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="trips.html">Trips</a>
+      <a href="events.html" aria-current="page">Events</a>
+      <a href="whiteboard.html">Whiteboard</a>
+      <a href="recommend.html">Recommended</a>
+      <a href="profile.html">Log in</a>
+    </nav>
+  </header>
 
-    <a class="btn" href="index.html">← Back</a>
+  <main class="event-page">
+    <section id="active-event" class="event-shell" aria-labelledby="event-title">
+      <div class="event-hero">
+        <p class="eyebrow">JailRabbit community challenge</p>
+        <div class="event-status-row">
+          <span id="event-status" class="status-pill">Loading event status</span>
+          <span class="timezone-label">Times shown in Europe/Oslo</span>
+        </div>
+
+        <h1 id="event-title">Ranked Race 2026</h1>
+        <p class="event-intro">
+          Calling all elite epic swag gamers. Climb as far as you can in League of
+          Legends or Valorant during one month. Your starting rank does not matter.
+          The player with the largest net LP or RR gain wins their game category.
+        </p>
+
+        <ul class="event-dates">
+          <li class="date-card">
+            <span class="date-label">Challenge starts</span>
+            <strong id="event-start-date">3 August 2026</strong>
+          </li>
+          <li class="date-card">
+            <span class="date-label">Registration closes</span>
+            <strong id="signup-close-date">5 August 2026, 23:59</strong>
+          </li>
+          <li class="date-card">
+            <span class="date-label">Challenge ends</span>
+            <strong id="event-end-date">1 September 2026, 23:59</strong>
+          </li>
+        </ul>
+
+        <div class="countdown-card">
+          <div>
+            <span id="countdown-label" class="date-label">Registration closes in</span>
+            <strong id="countdown" class="countdown" aria-live="polite">Calculating…</strong>
+          </div>
+          <p id="phase-message" class="phase-message">
+            Submit your main account in the JailRabbit Discord for approval.
+          </p>
+        </div>
+      </div>
+
+      <section class="event-section" aria-labelledby="leaderboard-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Live standings</p>
+            <h2 id="leaderboard-title">League of Legends leaderboard</h2>
+          </div>
+          <div class="game-tabs" role="tablist" aria-label="Choose leaderboard">
+            <button
+              class="game-tab is-active"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              data-game="league"
+            >
+              League of Legends
+            </button>
+            <button
+              class="game-tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-game="valorant"
+            >
+              Valorant
+            </button>
+          </div>
+        </div>
+
+        <section class="leaderboard-wrap" aria-live="polite" aria-label="Ranked Race leaderboard">
+          <table class="leaderboard">
+            <thead>
+              <tr>
+                <th scope="col">Place</th>
+                <th scope="col">Player</th>
+                <th scope="col">Starting rank</th>
+                <th scope="col">Current rank</th>
+                <th scope="col">Net gain</th>
+                <th scope="col">W / L / D</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body"></tbody>
+          </table>
+        </section>
+
+        <div class="scoring-note">
+          <strong>How scoring works</strong>
+          <p>
+            Your score is the net LP or RR gained from your approved starting
+            position. League and Valorant scores stay separate, and the highest
+            positive gain in each game wins.
+          </p>
+        </div>
+      </section>
+
+      <section class="event-section rules-section" aria-labelledby="rules-title">
+        <div class="section-heading rules-heading">
+          <div>
+            <p class="eyebrow">Play fair</p>
+            <h2 id="rules-title">Rules</h2>
+          </div>
+          <p>Friendly competition, serious bragging rights.</p>
+        </div>
+
+        <ol class="rules-grid">
+          <li>
+            <span>01</span>
+            <p>The challenge runs from 3 August through 1 September 2026.</p>
+          </li>
+          <li>
+            <span>02</span>
+            <p>You must use your main or highest-ranked account. Accounts will be checked.</p>
+          </li>
+          <li>
+            <span>03</span>
+            <p>
+              You must already have played at least 10 ranked games this season.
+              Emerald and Diamond players need at least 25.
+            </p>
+          </li>
+          <li>
+            <span>04</span>
+            <p>Duo play with other competitors is allowed. Intentional losing is not.</p>
+          </li>
+          <li>
+            <span>05</span>
+            <p>
+              Boosting results in immediate disqualification for everyone involved.
+            </p>
+          </li>
+          <li>
+            <span>06</span>
+            <p>You may enter both games, but each game has its own leaderboard and winner.</p>
+          </li>
+          <li>
+            <span>07</span>
+            <p>Your account must be submitted within 48 hours and approved before tracking begins.</p>
+          </li>
+          <li>
+            <span>08</span>
+            <p>Accounts cannot be swapped, and new competitors cannot join after registration closes.</p>
+          </li>
+          <li>
+            <span>09</span>
+            <p>Toxicity and overly negative behaviour are not tolerated.</p>
+          </li>
+        </ol>
+      </section>
+
+      <div class="event-footer-actions">
+        <a class="btn" href="https://discord.gg/jailrabbit" target="_blank" rel="noopener noreferrer">
+          Open JailRabbit Discord
+        </a>
+        <a class="text-link" href="index.html">← Back to home</a>
+      </div>
+    </section>
+
+    <section id="archived-event" class="event-shell archived-event" hidden>
+      <p class="eyebrow">JailRabbit events</p>
+      <h1>No active events</h1>
+      <p>
+        The Ranked Race has ended and is no longer available. The next community
+        event will appear here when it is ready.
+      </p>
+      <a class="btn" href="index.html">← Back to home</a>
+    </section>
+
+    <noscript>
+      <p class="noscript-notice">
+        JavaScript is required to show the current event status and leaderboard.
+      </p>
+    </noscript>
   </main>
+
+  <script type="module" src="events.js"></script>
 </body>
 </html>

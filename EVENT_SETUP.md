@@ -1,6 +1,12 @@
-# Ranked Race setup
+# JailRabbit events setup
 
-The event dates and participant lists are stored in `event-config.js`.
+Event cards, dates, rules and participant lists are stored in `event-config.js`.
+The `communityEvents` list controls which cards appear on `/events`.
+
+The three cards marked `Event idea` are safe placeholders. Edit or remove them
+when a real event is ready. Events with dates automatically appear in the green
+active-event bar while registration is open, while they are starting soon and
+while they are live.
 
 ## Add a League player
 
@@ -36,9 +42,9 @@ that is sent to the browser.
 
 ## Automatic dates
 
-- Event start: 3 August 2026 at 00:00, Europe/Oslo
 - Registration closes: 5 August 2026 at 23:59, Europe/Oslo
-- Event ends: 1 September 2026 at 23:59, Europe/Oslo
-- The event is automatically hidden: 9 September 2026 at 00:00, Europe/Oslo
+- Event start: 7 August 2026 at 00:00, Europe/Oslo
+- Event ends: 4 September 2026 at 23:59, Europe/Oslo
+- The event is automatically hidden: 12 September 2026 at 00:00, Europe/Oslo
 
 Change these values only in the date section at the top of `event-config.js`.

@@ -1,6 +1,6 @@
 export const rankedRaceEvent = {
   id: "ranked-race-2026",
-  title: "Ranked Race 2026",
+  title: "The Jailrabbit Climb",
   eyebrow: "League of Legends + Valorant",
   icon: "🏆",
   cardTheme: "ranked",

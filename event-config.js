@@ -6,8 +6,8 @@ export const rankedRaceEvent = {
   cardTheme: "ranked",
   timeZone: "Europe/Oslo",
   signupClosesAt: "2026-08-21T23:59:59+02:00",
-  startAt: "2026-08-24T00:00:00+02:00",
-  endAt: "2026-08-31T23:59:59+02:00",
+  startAt: "2026-08-21T00:00:00+02:00",
+  endAt: "2026-09-20T23:59:59+02:00",
   archiveAt: "2026-09-08T00:00:00+02:00",
   hideAfterArchive: true,
   cardDescription:

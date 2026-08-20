@@ -17,9 +17,7 @@ const countdownLabel = document.getElementById("countdown-label");
 const phaseMessage = document.getElementById("phase-message");
 const leaderboardTitle = document.getElementById("leaderboard-title");
 const leaderboardBody = document.getElementById("leaderboard-body");
-const gameTabs = Array.from(
-  document.querySelectorAll("[data-game]")
-);
+const gameTabs = Array.from(document.querySelectorAll("[data-game]"));
 
 const leagueLeaderboardUrl =
   "https://jailrabbit-tracker.smgunnestad.workers.dev/api/leaderboard";
@@ -27,12 +25,17 @@ const leagueLeaderboardUrl =
 const valorantLeaderboardUrl =
   "https://jailrabbit-tracker.smgunnestad.workers.dev/api/valorant-leaderboard";
 
+const tftLeaderboardUrl =
+  "https://jailrabbit-tracker.smgunnestad.workers.dev/api/tft-leaderboard";
+
 let selectedGame = "league";
 let openEvent = null;
 let lastFocusedElement = null;
 let lastPhaseSignature = "";
+
 let liveLeagueParticipants = null;
 let liveValorantParticipants = null;
+let liveTftParticipants = null;
 
 function getEventDates(event) {
   if (!event.startAt) return null;
@@ -68,6 +71,7 @@ function getPhaseDetails(event, phase) {
         "Drop your main account in the JailRabbit Discord before the doors close.",
       target: dates?.signupClose,
     },
+
     upcoming: {
       status: "Starting soon",
       label: "The race begins in",
@@ -75,6 +79,7 @@ function getPhaseDetails(event, phase) {
         "Sign-ups are closed. Get the snacks ready while we prepare the starting line.",
       target: dates?.start,
     },
+
     live: {
       status: "Live now",
       label: "The race ends in",
@@ -82,6 +87,7 @@ function getPhaseDetails(event, phase) {
         "The climb is on. Cheer for your people and follow the standings below.",
       target: dates?.end,
     },
+
     ended: {
       status: "Final results",
       label: "Results stay up for",
@@ -89,12 +95,14 @@ function getPhaseDetails(event, phase) {
         "GGs all around. The final standings remain available for one week.",
       target: dates?.archive,
     },
+
     idea: {
       status: "In the burrow",
       label: "Date coming later",
       message: "This event is still being planned.",
       target: null,
     },
+
     archived: {
       status: "Archived",
       label: "Event archived",
@@ -113,6 +121,7 @@ function formatEventDate(event, date, includeTime = true) {
     day: "numeric",
     month: "long",
     year: "numeric",
+
     ...(includeTime
       ? {
           hour: "2-digit",
@@ -152,11 +161,10 @@ function createEventCard(event, now) {
   const dates = getEventDates(event);
 
   const card = document.createElement("button");
+
   card.type = "button";
   card.className =
-    `event-card event-card--` +
-    `${event.cardTheme || "default"}`;
-
+    `event-card event-card--${event.cardTheme || "default"}`;
   card.dataset.eventId = event.id;
   card.setAttribute(
     "aria-label",
@@ -189,7 +197,11 @@ function createEventCard(event, now) {
   footer.className = "event-card-footer";
 
   footer.textContent = dates
-    ? `${formatEventDate(event, dates.start, false)} · Everyone welcome`
+    ? `${formatEventDate(
+        event,
+        dates.start,
+        false
+      )} · Everyone welcome`
     : "Date TBD · Everyone welcome";
 
   const openLabel = document.createElement("span");
@@ -206,30 +218,27 @@ function createEventCard(event, now) {
     openLabel
   );
 
-  card.addEventListener(
-    "click",
-    () => showEvent(event)
-  );
+  card.addEventListener("click", () => {
+    showEvent(event);
+  });
 
   return card;
 }
 
 function renderEventCards(now = new Date()) {
-  const visibleEvents = communityEvents.filter(
-    (event) => {
-      const isArchived =
-        getPhase(event, now) === "archived";
+  const visibleEvents = communityEvents.filter((event) => {
+    const isArchived =
+      getPhase(event, now) === "archived";
 
-      return !(
-        isArchived &&
-        event.hideAfterArchive
-      );
-    }
-  );
+    return !(
+      isArchived &&
+      event.hideAfterArchive
+    );
+  });
 
   eventsGrid.replaceChildren(
-    ...visibleEvents.map(
-      (event) => createEventCard(event, now)
+    ...visibleEvents.map((event) =>
+      createEventCard(event, now)
     )
   );
 
@@ -243,10 +252,9 @@ function createTickerItem(event) {
   button.className = "active-event-link";
   button.textContent = event.title;
 
-  button.addEventListener(
-    "click",
-    () => showEvent(event)
-  );
+  button.addEventListener("click", () => {
+    showEvent(event);
+  });
 
   return button;
 }
@@ -280,10 +288,7 @@ function renderActiveEvents(now = new Date()) {
     const item = createTickerItem(event);
 
     if (index >= activeEvents.length) {
-      item.setAttribute(
-        "aria-hidden",
-        "true"
-      );
+      item.setAttribute("aria-hidden", "true");
     }
 
     activeEventsTrack.append(item);
@@ -308,8 +313,9 @@ function renderRules() {
         document.createElement("p");
 
       number.className = "rule-number";
-      number.textContent =
-        String(index + 1).padStart(2, "0");
+      number.textContent = String(
+        index + 1
+      ).padStart(2, "0");
 
       text.textContent = rule;
 
@@ -335,8 +341,7 @@ function createPlayerCell(player) {
     name.rel = "noopener noreferrer";
   }
 
-  const account =
-    document.createElement("span");
+  const account = document.createElement("span");
 
   account.className = "player-account";
   account.textContent = player.account;
@@ -373,75 +378,85 @@ function createLeaderboardEmptyRow(message) {
   leaderboardBody.append(row);
 }
 
+function getGameLabel(game) {
+  const labels = {
+    league: "League of Legends",
+    valorant: "Valorant",
+    tft: "Teamfight Tactics",
+  };
+
+  return labels[game] || "Unknown game";
+}
+
 function renderLeaderboardRows(
   participants,
   game
 ) {
   leaderboardBody.replaceChildren();
 
-  if (participants.length === 0) {
+  if (!participants || participants.length === 0) {
     createLeaderboardEmptyRow(
-      `Approved ${
-        game === "league"
-          ? "League of Legends"
-          : "Valorant"
-      } competitors will appear here.`
+      `Approved ${getGameLabel(
+        game
+      )} competitors will appear here.`
     );
 
     return;
   }
 
-  participants.forEach(
-    (player, index) => {
-      const row =
-        document.createElement("tr");
+  participants.forEach((player, index) => {
+    const row = document.createElement("tr");
 
-      const result =
-        `${player.wins ?? 0} / ` +
-        `${player.losses ?? 0} / ` +
-        `${player.draws ?? 0}`;
+    const result =
+      `${player.wins ?? 0} / ` +
+      `${player.losses ?? 0} / ` +
+      `${player.draws ?? 0}`;
 
-      const hasScore =
-        Number.isFinite(player.scoreChange);
+    const hasScore =
+      Number.isFinite(player.scoreChange);
 
-      const gainPrefix =
+    const gainPrefix =
+      hasScore && player.scoreChange > 0
+        ? "+"
+        : "";
+
+    row.append(
+      createTextCell(
+        `#${index + 1}`,
+        "place-cell"
+      ),
+
+      createPlayerCell(player),
+
+      createTextCell(
+        player.startRank ||
+          "Locked at start"
+      ),
+
+      createTextCell(
+        player.currentRank ||
+          "Unranked"
+      ),
+
+      createTextCell(
+        hasScore
+          ? `${gainPrefix}${player.scoreChange}`
+          : "—",
+
         hasScore &&
-        player.scoreChange > 0
-          ? "+"
-          : "";
+          player.scoreChange >= 0
+          ? "score-positive"
+          : "score-negative"
+      ),
 
-      row.append(
-        createTextCell(
-          `#${index + 1}`,
-          "place-cell"
-        ),
-        createPlayerCell(player),
-        createTextCell(
-          player.startRank ||
-            "Locked at start"
-        ),
-        createTextCell(
-          player.currentRank ||
-            "Unranked"
-        ),
-        createTextCell(
-          hasScore
-            ? `${gainPrefix}${player.scoreChange}`
-            : "—",
-          hasScore &&
-            player.scoreChange >= 0
-            ? "score-positive"
-            : "score-negative"
-        ),
-        createTextCell(result)
-      );
+      createTextCell(result)
+    );
 
-      leaderboardBody.append(row);
-    }
-  );
+    leaderboardBody.append(row);
+  });
 }
 
-function formatLeagueRank(player) {
+function formatLpRank(player) {
   if (
     !player.tier ||
     player.tier === "UNRANKED"
@@ -453,12 +468,19 @@ function formatLeagueRank(player) {
     player.tier.charAt(0) +
     player.tier.slice(1).toLowerCase();
 
+  const division =
+    player.division || "";
+
   return (
     `${formattedTier} ` +
-    `${player.division || ""}, ` +
+    `${division}, ` +
     `${player.leaguePoints ?? 0} LP`
   ).trim();
 }
+
+// ======================================================
+// LEAGUE LEADERBOARD
+// ======================================================
 
 function mapLiveLeagueParticipants(
   participants
@@ -467,7 +489,7 @@ function mapLiveLeagueParticipants(
     displayName: player.player,
     account: player.riotId,
     startRank: "Locked at event start",
-    currentRank: formatLeagueRank(player),
+    currentRank: formatLpRank(player),
     scoreChange: null,
     wins: player.wins,
     losses: player.losses,
@@ -492,7 +514,7 @@ async function loadLiveLeagueLeaderboard() {
 
     if (!response.ok) {
       throw new Error(
-        "Leaderboard request failed"
+        "League leaderboard request failed"
       );
     }
 
@@ -520,6 +542,10 @@ async function loadLiveLeagueLeaderboard() {
   }
 }
 
+// ======================================================
+// VALORANT LEADERBOARD
+// ======================================================
+
 function mapLiveValorantParticipants(
   participants
 ) {
@@ -527,11 +553,13 @@ function mapLiveValorantParticipants(
     displayName: player.player,
     account: player.riotId,
     startRank: "Locked at event start",
+
     currentRank: player.tierName
       ? `${player.tierName}, ${
           player.rr ?? 0
         } RR`
       : "Unranked",
+
     scoreChange: null,
     wins: player.wins,
     losses: player.losses,
@@ -584,21 +612,103 @@ async function loadLiveValorantLeaderboard() {
   }
 }
 
+// ======================================================
+// TFT LEADERBOARD
+// ======================================================
+
+function mapLiveTftParticipants(
+  participants
+) {
+  return participants.map((player) => ({
+    displayName: player.player,
+    account: player.riotId,
+    startRank: "Locked at event start",
+    currentRank: formatLpRank(player),
+    scoreChange: null,
+    wins: player.wins,
+    losses: player.losses,
+    draws: 0,
+  }));
+}
+
+async function loadLiveTftLeaderboard() {
+  leaderboardBody.replaceChildren();
+
+  createLeaderboardEmptyRow(
+    "Loading live TFT standings…"
+  );
+
+  try {
+    const response = await fetch(
+      tftLeaderboardUrl,
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "TFT leaderboard request failed"
+      );
+    }
+
+    const data = await response.json();
+
+    liveTftParticipants =
+      mapLiveTftParticipants(
+        data.participants || []
+      );
+
+    if (selectedGame === "tft") {
+      renderLeaderboardRows(
+        liveTftParticipants,
+        "tft"
+      );
+    }
+  } catch (error) {
+    if (selectedGame === "tft") {
+      leaderboardBody.replaceChildren();
+
+      createLeaderboardEmptyRow(
+        "Live TFT standings are temporarily unavailable. Please try again shortly."
+      );
+    }
+  }
+}
+
+// ======================================================
+// GAME TAB HANDLING
+// ======================================================
+
 function renderLeaderboard(game) {
   selectedGame = game;
 
-  const label =
-    game === "league"
-      ? "League of Legends"
-      : "Valorant";
+  const gameDetails = {
+    league: {
+      label: "League of Legends",
+      participants: liveLeagueParticipants,
+      loader: loadLiveLeagueLeaderboard,
+    },
 
-  const participants =
-    game === "league"
-      ? liveLeagueParticipants
-      : liveValorantParticipants;
+    valorant: {
+      label: "Valorant",
+      participants: liveValorantParticipants,
+      loader: loadLiveValorantLeaderboard,
+    },
+
+    tft: {
+      label: "Teamfight Tactics",
+      participants: liveTftParticipants,
+      loader: loadLiveTftLeaderboard,
+    },
+  };
+
+  const currentGame =
+    gameDetails[game] ||
+    gameDetails.league;
 
   leaderboardTitle.textContent =
-    `${label} leaderboard`;
+    `${currentGame.label} leaderboard`;
 
   gameTabs.forEach((tab) => {
     const isSelected =
@@ -615,24 +725,13 @@ function renderLeaderboard(game) {
     );
   });
 
-  if (
-    game === "league" &&
-    !participants
-  ) {
-    loadLiveLeagueLeaderboard();
-    return;
-  }
-
-  if (
-    game === "valorant" &&
-    !participants
-  ) {
-    loadLiveValorantLeaderboard();
+  if (!currentGame.participants) {
+    currentGame.loader();
     return;
   }
 
   renderLeaderboardRows(
-    participants,
+    currentGame.participants,
     game
   );
 }
@@ -642,8 +741,10 @@ function updateOpenEventState(
 ) {
   if (!openEvent) return;
 
-  const phase =
-    getPhase(openEvent, now);
+  const phase = getPhase(
+    openEvent,
+    now
+  );
 
   const details =
     getPhaseDetails(
@@ -654,7 +755,8 @@ function updateOpenEventState(
   eventStatus.textContent =
     details.status;
 
-  eventStatus.dataset.phase = phase;
+  eventStatus.dataset.phase =
+    phase;
 
   if (!details.target) return;
 
@@ -673,27 +775,31 @@ function updateOpenEventState(
 
 function showEvent(event) {
   openEvent = event;
-
   lastFocusedElement =
     document.activeElement;
 
-  const dates = getEventDates(event);
+  const dates =
+    getEventDates(event);
 
   document.getElementById(
     "modal-event-icon"
-  ).textContent = event.icon || "🐇";
+  ).textContent =
+    event.icon || "🐇";
 
   document.getElementById(
     "modal-event-eyebrow"
-  ).textContent = event.eyebrow;
+  ).textContent =
+    event.eyebrow;
 
   document.getElementById(
     "modal-event-title"
-  ).textContent = event.title;
+  ).textContent =
+    event.title;
 
   document.getElementById(
     "modal-event-intro"
-  ).textContent = event.intro;
+  ).textContent =
+    event.intro;
 
   const cozyNote =
     document.getElementById(
@@ -707,14 +813,21 @@ function showEvent(event) {
     !event.cozyNote;
 
   rankedRaceContent.hidden =
-    event.id !== rankedRaceEvent.id;
+    event.id !==
+    rankedRaceEvent.id;
 
   ideaContent.hidden =
-    event.id === rankedRaceEvent.id;
+    event.id ===
+    rankedRaceEvent.id;
 
-  eventDatesList.hidden = !dates;
-  countdownCard.hidden = !dates;
-  timezoneLabel.hidden = !dates;
+  eventDatesList.hidden =
+    !dates;
+
+  countdownCard.hidden =
+    !dates;
+
+  timezoneLabel.hidden =
+    !dates;
 
   if (dates) {
     document.getElementById(
@@ -778,9 +891,8 @@ function refreshTimeSensitiveUI() {
 
   const phaseSignature =
     communityEvents
-      .map(
-        (event) =>
-          getPhase(event, now)
+      .map((event) =>
+        getPhase(event, now)
       )
       .join("|");
 
@@ -801,10 +913,11 @@ function refreshTimeSensitiveUI() {
 gameTabs.forEach((tab) => {
   tab.addEventListener(
     "click",
-    () =>
+    () => {
       renderLeaderboard(
         tab.dataset.game
-      )
+      );
+    }
   );
 });
 
@@ -846,8 +959,7 @@ const linkedEvent =
 
 if (
   linkedEvent &&
-  getPhase(linkedEvent) !==
-    "archived"
+  getPhase(linkedEvent) !== "archived"
 ) {
   showEvent(linkedEvent);
 }

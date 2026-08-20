@@ -69,20 +69,40 @@
     aria-labelledby="modal-event-title"
     hidden
   >
-    <button class="event-modal-backdrop" type="button" data-close-event aria-label="Close event"></button>
+    <button
+      class="event-modal-backdrop"
+      type="button"
+      data-close-event
+      aria-label="Close event"
+    ></button>
 
     <article class="event-modal-panel" tabindex="-1">
-      <button class="event-modal-close" type="button" data-close-event aria-label="Close event">
+      <button
+        class="event-modal-close"
+        type="button"
+        data-close-event
+        aria-label="Close event"
+      >
         <span aria-hidden="true">×</span>
       </button>
 
       <div class="event-modal-scroll">
         <header class="event-detail-hero">
-          <div id="modal-event-icon" class="event-detail-icon" aria-hidden="true"></div>
+          <div
+            id="modal-event-icon"
+            class="event-detail-icon"
+            aria-hidden="true"
+          ></div>
+
           <div class="event-status-row">
-            <span id="event-status" class="status-pill">Loading event status</span>
-            <span id="timezone-label" class="timezone-label">Times shown in Europe/Oslo</span>
+            <span id="event-status" class="status-pill">
+              Loading event status
+            </span>
+            <span id="timezone-label" class="timezone-label">
+              Times shown in Europe/Oslo
+            </span>
           </div>
+
           <p id="modal-event-eyebrow" class="eyebrow"></p>
           <h2 id="modal-event-title">Event details</h2>
           <p id="modal-event-intro" class="event-intro"></p>
@@ -105,8 +125,16 @@
 
           <div id="countdown-card" class="countdown-card">
             <div>
-              <span id="countdown-label" class="date-label">Sign-ups close in</span>
-              <strong id="countdown" class="countdown" aria-live="polite">Calculating…</strong>
+              <span id="countdown-label" class="date-label">
+                Sign-ups close in
+              </span>
+              <strong
+                id="countdown"
+                class="countdown"
+                aria-live="polite"
+              >
+                Calculating…
+              </strong>
             </div>
             <p id="phase-message" class="phase-message"></p>
           </div>
@@ -117,9 +145,16 @@
             <div class="section-heading">
               <div>
                 <p class="eyebrow">Live standings</p>
-                <h3 id="leaderboard-title">League of Legends leaderboard</h3>
+                <h3 id="leaderboard-title">
+                  League of Legends leaderboard
+                </h3>
               </div>
-              <div class="game-tabs" role="tablist" aria-label="Choose leaderboard">
+
+              <div
+                class="game-tabs"
+                role="tablist"
+                aria-label="Choose leaderboard"
+              >
                 <button
                   class="game-tab is-active"
                   type="button"
@@ -129,6 +164,7 @@
                 >
                   League of Legends
                 </button>
+
                 <button
                   class="game-tab"
                   type="button"
@@ -138,10 +174,24 @@
                 >
                   Valorant
                 </button>
+
+                <button
+                  class="game-tab"
+                  type="button"
+                  role="tab"
+                  aria-selected="false"
+                  data-game="tft"
+                >
+                  Teamfight Tactics
+                </button>
               </div>
             </div>
 
-            <section class="leaderboard-wrap" aria-live="polite" aria-label="Ranked Race leaderboard">
+            <section
+              class="leaderboard-wrap"
+              aria-live="polite"
+              aria-label="Ranked Race leaderboard"
+            >
               <table class="leaderboard">
                 <thead>
                   <tr>
@@ -160,14 +210,17 @@
             <div class="scoring-note">
               <strong>How scoring works</strong>
               <p>
-                Your score is the net LP or RR gained from your approved starting
-                position. Starting rank does not matter, and the highest positive
-                gain in each game wins.
+                Your score is the net LP or RR gained from your approved
+                starting position. Starting rank does not matter, and the
+                highest positive gain in each game wins.
               </p>
             </div>
           </section>
 
-          <section class="event-section rules-section" aria-labelledby="rules-title">
+          <section
+            class="event-section rules-section"
+            aria-labelledby="rules-title"
+          >
             <div class="section-heading rules-heading">
               <div>
                 <p class="eyebrow">The cozy rulebook</p>
@@ -175,18 +228,28 @@
               </div>
               <p>Serious climbing. Extremely unserious people.</p>
             </div>
+
             <div id="rules-grid" class="rules-grid"></div>
           </section>
 
           <div class="event-footer-actions">
-            <a class="btn event-discord-button" href="https://discord.gg/jailrabbit" target="_blank" rel="noopener noreferrer">
+            <a
+              class="btn event-discord-button"
+              href="https://discord.gg/jailrabbit"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Sign up in Discord
             </a>
-            <p>Sign-ups close Wednesday. The race begins Friday.</p>
+            <p>Sign-ups close Friday. The race begins Monday.</p>
           </div>
         </div>
 
-        <section id="idea-content" class="event-section idea-content" hidden>
+        <section
+          id="idea-content"
+          class="event-section idea-content"
+          hidden
+        >
           <span class="idea-big-icon" aria-hidden="true">🐇</span>
           <p class="eyebrow">Still in the burrow</p>
           <h3>Details are being cooked</h3>

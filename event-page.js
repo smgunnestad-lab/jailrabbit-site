@@ -17,7 +17,9 @@ const countdownLabel = document.getElementById("countdown-label");
 const phaseMessage = document.getElementById("phase-message");
 const leaderboardTitle = document.getElementById("leaderboard-title");
 const leaderboardBody = document.getElementById("leaderboard-body");
-const gameTabs = Array.from(document.querySelectorAll("[data-game]"));
+const gameTabs = Array.from(
+  document.querySelectorAll("[data-game]")
+);
 
 const leagueLeaderboardUrl =
   "https://jailrabbit-tracker.smgunnestad.workers.dev/api/leaderboard";
@@ -25,17 +27,12 @@ const leagueLeaderboardUrl =
 const valorantLeaderboardUrl =
   "https://jailrabbit-tracker.smgunnestad.workers.dev/api/valorant-leaderboard";
 
-const tftLeaderboardUrl =
-  "https://jailrabbit-tracker.smgunnestad.workers.dev/api/tft-leaderboard";
-
 let selectedGame = "league";
 let openEvent = null;
 let lastFocusedElement = null;
 let lastPhaseSignature = "";
-
 let liveLeagueParticipants = null;
 let liveValorantParticipants = null;
-let liveTftParticipants = null;
 
 function getEventDates(event) {
   if (!event.startAt) return null;
@@ -121,7 +118,6 @@ function formatEventDate(event, date, includeTime = true) {
     day: "numeric",
     month: "long",
     year: "numeric",
-
     ...(includeTime
       ? {
           hour: "2-digit",
@@ -161,15 +157,11 @@ function createEventCard(event, now) {
   const dates = getEventDates(event);
 
   const card = document.createElement("button");
-
   card.type = "button";
   card.className =
     `event-card event-card--${event.cardTheme || "default"}`;
   card.dataset.eventId = event.id;
-  card.setAttribute(
-    "aria-label",
-    `Open ${event.title}`
-  );
+  card.setAttribute("aria-label", `Open ${event.title}`);
 
   const artwork = document.createElement("span");
   artwork.className = "event-card-art";
@@ -195,7 +187,6 @@ function createEventCard(event, now) {
 
   const footer = document.createElement("span");
   footer.className = "event-card-footer";
-
   footer.textContent = dates
     ? `${formatEventDate(
         event,
@@ -342,7 +333,6 @@ function createPlayerCell(player) {
   }
 
   const account = document.createElement("span");
-
   account.className = "player-account";
   account.textContent = player.account;
 
@@ -351,10 +341,7 @@ function createPlayerCell(player) {
   return cell;
 }
 
-function createTextCell(
-  value,
-  className = ""
-) {
+function createTextCell(value, className = "") {
   const cell = document.createElement("td");
 
   cell.textContent = value;
@@ -378,16 +365,6 @@ function createLeaderboardEmptyRow(message) {
   leaderboardBody.append(row);
 }
 
-function getGameLabel(game) {
-  const labels = {
-    league: "League of Legends",
-    valorant: "Valorant",
-    tft: "Teamfight Tactics",
-  };
-
-  return labels[game] || "Unknown game";
-}
-
 function renderLeaderboardRows(
   participants,
   game
@@ -395,10 +372,13 @@ function renderLeaderboardRows(
   leaderboardBody.replaceChildren();
 
   if (!participants || participants.length === 0) {
+    const gameLabels = {
+      league: "League of Legends",
+      valorant: "Valorant",
+    };
+
     createLeaderboardEmptyRow(
-      `Approved ${getGameLabel(
-        game
-      )} competitors will appear here.`
+      `Approved ${gameLabels[game]} competitors will appear here.`
     );
 
     return;
@@ -456,7 +436,7 @@ function renderLeaderboardRows(
   });
 }
 
-function formatLpRank(player) {
+function formatLeagueRank(player) {
   if (
     !player.tier ||
     player.tier === "UNRANKED"
@@ -464,23 +444,16 @@ function formatLpRank(player) {
     return "Unranked";
   }
 
-  const formattedTier =
+  const tier =
     player.tier.charAt(0) +
     player.tier.slice(1).toLowerCase();
 
-  const division =
-    player.division || "";
-
   return (
-    `${formattedTier} ` +
-    `${division}, ` +
+    `${tier} ` +
+    `${player.division || ""}, ` +
     `${player.leaguePoints ?? 0} LP`
   ).trim();
 }
-
-// ======================================================
-// LEAGUE LEADERBOARD
-// ======================================================
 
 function mapLiveLeagueParticipants(
   participants
@@ -489,7 +462,7 @@ function mapLiveLeagueParticipants(
     displayName: player.player,
     account: player.riotId,
     startRank: "Locked at event start",
-    currentRank: formatLpRank(player),
+    currentRank: formatLeagueRank(player),
     scoreChange: null,
     wins: player.wins,
     losses: player.losses,
@@ -541,10 +514,6 @@ async function loadLiveLeagueLeaderboard() {
     }
   }
 }
-
-// ======================================================
-// VALORANT LEADERBOARD
-// ======================================================
 
 function mapLiveValorantParticipants(
   participants
@@ -612,74 +581,6 @@ async function loadLiveValorantLeaderboard() {
   }
 }
 
-// ======================================================
-// TFT LEADERBOARD
-// ======================================================
-
-function mapLiveTftParticipants(
-  participants
-) {
-  return participants.map((player) => ({
-    displayName: player.player,
-    account: player.riotId,
-    startRank: "Locked at event start",
-    currentRank: formatLpRank(player),
-    scoreChange: null,
-    wins: player.wins,
-    losses: player.losses,
-    draws: 0,
-  }));
-}
-
-async function loadLiveTftLeaderboard() {
-  leaderboardBody.replaceChildren();
-
-  createLeaderboardEmptyRow(
-    "Loading live TFT standings…"
-  );
-
-  try {
-    const response = await fetch(
-      tftLeaderboardUrl,
-      {
-        cache: "no-store",
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        "TFT leaderboard request failed"
-      );
-    }
-
-    const data = await response.json();
-
-    liveTftParticipants =
-      mapLiveTftParticipants(
-        data.participants || []
-      );
-
-    if (selectedGame === "tft") {
-      renderLeaderboardRows(
-        liveTftParticipants,
-        "tft"
-      );
-    }
-  } catch (error) {
-    if (selectedGame === "tft") {
-      leaderboardBody.replaceChildren();
-
-      createLeaderboardEmptyRow(
-        "Live TFT standings are temporarily unavailable. Please try again shortly."
-      );
-    }
-  }
-}
-
-// ======================================================
-// GAME TAB HANDLING
-// ======================================================
-
 function renderLeaderboard(game) {
   selectedGame = game;
 
@@ -694,12 +595,6 @@ function renderLeaderboard(game) {
       label: "Valorant",
       participants: liveValorantParticipants,
       loader: loadLiveValorantLeaderboard,
-    },
-
-    tft: {
-      label: "Teamfight Tactics",
-      participants: liveTftParticipants,
-      loader: loadLiveTftLeaderboard,
     },
   };
 

@@ -1,24 +1,89 @@
-import { communityEvents, rankedRaceEvent } from "./event-config.js";
+import {
+  communityEvents,
+  rankedRaceEvent,
+} from "./event-config.js";
 
-const eventsGrid = document.getElementById("events-grid");
-const eventsEmpty = document.getElementById("events-empty");
-const activeEventsBar = document.getElementById("active-events-bar");
-const activeEventsTrack = document.getElementById("active-events-track");
-const eventModal = document.getElementById("event-modal");
-const modalPanel = eventModal.querySelector(".event-modal-panel");
-const rankedRaceContent = document.getElementById("ranked-race-content");
-const ideaContent = document.getElementById("idea-content");
-const eventStatus = document.getElementById("event-status");
-const timezoneLabel = document.getElementById("timezone-label");
-const eventDatesList = document.getElementById("event-dates");
-const countdownCard = document.getElementById("countdown-card");
-const countdown = document.getElementById("countdown");
-const countdownLabel = document.getElementById("countdown-label");
-const phaseMessage = document.getElementById("phase-message");
-const leaderboardTitle = document.getElementById("leaderboard-title");
-const leaderboardBody = document.getElementById("leaderboard-body");
+const eventsGrid =
+  document.getElementById("events-grid");
+
+const eventsEmpty =
+  document.getElementById("events-empty");
+
+const activeEventsBar =
+  document.getElementById(
+    "active-events-bar"
+  );
+
+const activeEventsTrack =
+  document.getElementById(
+    "active-events-track"
+  );
+
+const eventModal =
+  document.getElementById("event-modal");
+
+const modalPanel =
+  eventModal.querySelector(
+    ".event-modal-panel"
+  );
+
+const rankedRaceContent =
+  document.getElementById(
+    "ranked-race-content"
+  );
+
+const ideaContent =
+  document.getElementById(
+    "idea-content"
+  );
+
+const eventStatus =
+  document.getElementById(
+    "event-status"
+  );
+
+const timezoneLabel =
+  document.getElementById(
+    "timezone-label"
+  );
+
+const eventDatesList =
+  document.getElementById(
+    "event-dates"
+  );
+
+const countdownCard =
+  document.getElementById(
+    "countdown-card"
+  );
+
+const countdown =
+  document.getElementById("countdown");
+
+const countdownLabel =
+  document.getElementById(
+    "countdown-label"
+  );
+
+const phaseMessage =
+  document.getElementById(
+    "phase-message"
+  );
+
+const leaderboardTitle =
+  document.getElementById(
+    "leaderboard-title"
+  );
+
+const leaderboardBody =
+  document.getElementById(
+    "leaderboard-body"
+  );
+
 const gameTabs = Array.from(
-  document.querySelectorAll("[data-game]")
+  document.querySelectorAll(
+    "[data-game]"
+  )
 );
 
 const leagueLeaderboardUrl =
@@ -31,6 +96,7 @@ let selectedGame = "league";
 let openEvent = null;
 let lastFocusedElement = null;
 let lastPhaseSignature = "";
+
 let liveLeagueParticipants = null;
 let liveValorantParticipants = null;
 
@@ -38,26 +104,45 @@ function getEventDates(event) {
   if (!event.startAt) return null;
 
   return {
-    signupClose: new Date(event.signupClosesAt),
+    signupClose: new Date(
+      event.signupClosesAt
+    ),
     start: new Date(event.startAt),
     end: new Date(event.endAt),
     archive: new Date(event.archiveAt),
   };
 }
 
-function getPhase(event, now = new Date()) {
+function getPhase(
+  event,
+  now = new Date()
+) {
   const dates = getEventDates(event);
 
   if (!dates) return "idea";
-  if (now >= dates.archive) return "archived";
-  if (now > dates.end) return "ended";
-  if (now >= dates.start) return "live";
-  if (now > dates.signupClose) return "upcoming";
+  if (now >= dates.archive) {
+    return "archived";
+  }
+
+  if (now > dates.end) {
+    return "ended";
+  }
+
+  if (now >= dates.start) {
+    return "live";
+  }
+
+  if (now > dates.signupClose) {
+    return "upcoming";
+  }
 
   return "registration";
 }
 
-function getPhaseDetails(event, phase) {
+function getPhaseDetails(
+  event,
+  phase
+) {
   const dates = getEventDates(event);
 
   const phases = {
@@ -96,14 +181,16 @@ function getPhaseDetails(event, phase) {
     idea: {
       status: "In the burrow",
       label: "Date coming later",
-      message: "This event is still being planned.",
+      message:
+        "This event is still being planned.",
       target: null,
     },
 
     archived: {
       status: "Archived",
       label: "Event archived",
-      message: "This event is no longer available.",
+      message:
+        "This event is no longer available.",
       target: null,
     },
   };
@@ -111,21 +198,31 @@ function getPhaseDetails(event, phase) {
   return phases[phase];
 }
 
-function formatEventDate(event, date, includeTime = true) {
-  return new Intl.DateTimeFormat("en-GB", {
-    timeZone: event.timeZone || "Europe/Oslo",
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    ...(includeTime
-      ? {
-          hour: "2-digit",
-          minute: "2-digit",
-          hourCycle: "h23",
-        }
-      : {}),
-  }).format(date);
+function formatEventDate(
+  event,
+  date,
+  includeTime = true
+) {
+  return new Intl.DateTimeFormat(
+    "en-GB",
+    {
+      timeZone:
+        event.timeZone ||
+        "Europe/Oslo",
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+
+      ...(includeTime
+        ? {
+            hour: "2-digit",
+            minute: "2-digit",
+            hourCycle: "h23",
+          }
+        : {}),
+    }
+  ).format(date);
 }
 
 function formatDuration(milliseconds) {
@@ -134,59 +231,121 @@ function formatDuration(milliseconds) {
     Math.floor(milliseconds / 1000)
   );
 
-  const days = Math.floor(totalSeconds / 86400);
+  const days = Math.floor(
+    totalSeconds / 86400
+  );
+
   const hours = Math.floor(
     (totalSeconds % 86400) / 3600
   );
+
   const minutes = Math.floor(
     (totalSeconds % 3600) / 60
   );
-  const seconds = totalSeconds % 60;
+
+  const seconds =
+    totalSeconds % 60;
 
   return (
     `${days}d ` +
-    `${String(hours).padStart(2, "0")}h ` +
-    `${String(minutes).padStart(2, "0")}m ` +
-    `${String(seconds).padStart(2, "0")}s`
+    `${String(hours).padStart(
+      2,
+      "0"
+    )}h ` +
+    `${String(minutes).padStart(
+      2,
+      "0"
+    )}m ` +
+    `${String(seconds).padStart(
+      2,
+      "0"
+    )}s`
   );
 }
 
 function createEventCard(event, now) {
-  const phase = getPhase(event, now);
-  const details = getPhaseDetails(event, phase);
+  const phase = getPhase(
+    event,
+    now
+  );
+
+  const details =
+    getPhaseDetails(event, phase);
+
   const dates = getEventDates(event);
 
-  const card = document.createElement("button");
+  const card =
+    document.createElement("button");
+
   card.type = "button";
+
   card.className =
-    `event-card event-card--${event.cardTheme || "default"}`;
+    `event-card event-card--${
+      event.cardTheme || "default"
+    }`;
+
   card.dataset.eventId = event.id;
-  card.setAttribute("aria-label", `Open ${event.title}`);
 
-  const artwork = document.createElement("span");
-  artwork.className = "event-card-art";
-  artwork.setAttribute("aria-hidden", "true");
-  artwork.textContent = event.icon || "🐇";
+  card.setAttribute(
+    "aria-label",
+    `Open ${event.title}`
+  );
 
-  const status = document.createElement("span");
-  status.className = "event-card-status";
+  const artwork =
+    document.createElement("span");
+
+  artwork.className =
+    "event-card-art";
+
+  artwork.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  artwork.textContent =
+    event.icon || "🐇";
+
+  const status =
+    document.createElement("span");
+
+  status.className =
+    "event-card-status";
+
   status.dataset.phase = phase;
   status.textContent = details.status;
 
-  const eyebrow = document.createElement("span");
-  eyebrow.className = "event-card-eyebrow";
-  eyebrow.textContent = event.eyebrow;
+  const eyebrow =
+    document.createElement("span");
 
-  const title = document.createElement("strong");
-  title.className = "event-card-title";
+  eyebrow.className =
+    "event-card-eyebrow";
+
+  eyebrow.textContent =
+    event.eyebrow;
+
+  const title =
+    document.createElement("strong");
+
+  title.className =
+    "event-card-title";
+
   title.textContent = event.title;
 
-  const description = document.createElement("span");
-  description.className = "event-card-description";
-  description.textContent = event.cardDescription;
+  const description =
+    document.createElement("span");
 
-  const footer = document.createElement("span");
-  footer.className = "event-card-footer";
+  description.className =
+    "event-card-description";
+
+  description.textContent =
+    event.cardDescription;
+
+  const footer =
+    document.createElement("span");
+
+  footer.className =
+    "event-card-footer";
+
   footer.textContent = dates
     ? `${formatEventDate(
         event,
@@ -195,9 +354,14 @@ function createEventCard(event, now) {
       )} · Everyone welcome`
     : "Date TBD · Everyone welcome";
 
-  const openLabel = document.createElement("span");
-  openLabel.className = "event-card-open";
-  openLabel.textContent = "Open event →";
+  const openLabel =
+    document.createElement("span");
+
+  openLabel.className =
+    "event-card-open";
+
+  openLabel.textContent =
+    "Open event →";
 
   card.append(
     artwork,
@@ -209,23 +373,30 @@ function createEventCard(event, now) {
     openLabel
   );
 
-  card.addEventListener("click", () => {
-    showEvent(event);
-  });
+  card.addEventListener(
+    "click",
+    () => showEvent(event)
+  );
 
   return card;
 }
 
-function renderEventCards(now = new Date()) {
-  const visibleEvents = communityEvents.filter((event) => {
-    const isArchived =
-      getPhase(event, now) === "archived";
+function renderEventCards(
+  now = new Date()
+) {
+  const visibleEvents =
+    communityEvents.filter(
+      (event) => {
+        const isArchived =
+          getPhase(event, now) ===
+          "archived";
 
-    return !(
-      isArchived &&
-      event.hideAfterArchive
+        return !(
+          isArchived &&
+          event.hideAfterArchive
+        );
+      }
     );
-  });
 
   eventsGrid.replaceChildren(
     ...visibleEvents.map((event) =>
@@ -233,32 +404,43 @@ function renderEventCards(now = new Date()) {
     )
   );
 
-  eventsEmpty.hidden = visibleEvents.length > 0;
+  eventsEmpty.hidden =
+    visibleEvents.length > 0;
 }
 
 function createTickerItem(event) {
-  const button = document.createElement("button");
+  const button =
+    document.createElement("button");
 
   button.type = "button";
-  button.className = "active-event-link";
+
+  button.className =
+    "active-event-link";
+
   button.textContent = event.title;
 
-  button.addEventListener("click", () => {
-    showEvent(event);
-  });
+  button.addEventListener(
+    "click",
+    () => showEvent(event)
+  );
 
   return button;
 }
 
-function renderActiveEvents(now = new Date()) {
-  const activeEvents = communityEvents.filter(
-    (event) =>
-      [
-        "registration",
-        "upcoming",
-        "live",
-      ].includes(getPhase(event, now))
-  );
+function renderActiveEvents(
+  now = new Date()
+) {
+  const activeEvents =
+    communityEvents.filter(
+      (event) =>
+        [
+          "registration",
+          "upcoming",
+          "live",
+        ].includes(
+          getPhase(event, now)
+        )
+    );
 
   activeEventsBar.hidden =
     activeEvents.length === 0;
@@ -272,38 +454,57 @@ function renderActiveEvents(now = new Date()) {
 
   const tickerEvents =
     activeEvents.length > 3
-      ? [...activeEvents, ...activeEvents]
+      ? [
+          ...activeEvents,
+          ...activeEvents,
+        ]
       : activeEvents;
 
-  tickerEvents.forEach((event, index) => {
-    const item = createTickerItem(event);
+  tickerEvents.forEach(
+    (event, index) => {
+      const item =
+        createTickerItem(event);
 
-    if (index >= activeEvents.length) {
-      item.setAttribute("aria-hidden", "true");
+      if (
+        index >= activeEvents.length
+      ) {
+        item.setAttribute(
+          "aria-hidden",
+          "true"
+        );
+      }
+
+      activeEventsTrack.append(item);
     }
-
-    activeEventsTrack.append(item);
-  });
+  );
 }
 
 function renderRules() {
   const rulesGrid =
-    document.getElementById("rules-grid");
+    document.getElementById(
+      "rules-grid"
+    );
 
   rulesGrid.replaceChildren();
 
   rankedRaceEvent.rules.forEach(
     (rule, index) => {
       const card =
-        document.createElement("article");
+        document.createElement(
+          "article"
+        );
 
       const number =
-        document.createElement("span");
+        document.createElement(
+          "span"
+        );
 
       const text =
         document.createElement("p");
 
-      number.className = "rule-number";
+      number.className =
+        "rule-number";
+
       number.textContent = String(
         index + 1
       ).padStart(2, "0");
@@ -317,32 +518,48 @@ function renderRules() {
 }
 
 function createPlayerCell(player) {
-  const cell = document.createElement("td");
+  const cell =
+    document.createElement("td");
 
-  const name = document.createElement(
-    player.profileUrl ? "a" : "span"
-  );
+  const name =
+    document.createElement(
+      player.profileUrl
+        ? "a"
+        : "span"
+    );
 
   name.className = "player-name";
-  name.textContent = player.displayName;
+
+  name.textContent =
+    player.displayName;
 
   if (player.profileUrl) {
     name.href = player.profileUrl;
     name.target = "_blank";
-    name.rel = "noopener noreferrer";
+    name.rel =
+      "noopener noreferrer";
   }
 
-  const account = document.createElement("span");
-  account.className = "player-account";
-  account.textContent = player.account;
+  const account =
+    document.createElement("span");
+
+  account.className =
+    "player-account";
+
+  account.textContent =
+    player.account;
 
   cell.append(name, account);
 
   return cell;
 }
 
-function createTextCell(value, className = "") {
-  const cell = document.createElement("td");
+function createTextCell(
+  value,
+  className = ""
+) {
+  const cell =
+    document.createElement("td");
 
   cell.textContent = value;
 
@@ -353,11 +570,18 @@ function createTextCell(value, className = "") {
   return cell;
 }
 
-function createLeaderboardEmptyRow(message) {
-  const row = document.createElement("tr");
-  const cell = document.createElement("td");
+function createLeaderboardEmptyRow(
+  message
+) {
+  const row =
+    document.createElement("tr");
 
-  cell.className = "leaderboard-empty";
+  const cell =
+    document.createElement("td");
+
+  cell.className =
+    "leaderboard-empty";
+
   cell.colSpan = 6;
   cell.textContent = message;
 
@@ -371,69 +595,81 @@ function renderLeaderboardRows(
 ) {
   leaderboardBody.replaceChildren();
 
-  if (!participants || participants.length === 0) {
+  if (participants.length === 0) {
     const gameLabels = {
-      league: "League of Legends",
+      league:
+        "League of Legends",
       valorant: "Valorant",
     };
 
     createLeaderboardEmptyRow(
-      `Approved ${gameLabels[game]} competitors will appear here.`
+      `Approved ${
+        gameLabels[game]
+      } competitors will appear here.`
     );
 
     return;
   }
 
-  participants.forEach((player, index) => {
-    const row = document.createElement("tr");
+  participants.forEach(
+    (player, index) => {
+      const row =
+        document.createElement("tr");
 
-    const result =
-      `${player.wins ?? 0} / ` +
-      `${player.losses ?? 0} / ` +
-      `${player.draws ?? 0}`;
+      const result =
+        `${player.wins ?? 0} / ` +
+        `${player.losses ?? 0} / ` +
+        `${player.draws ?? 0}`;
 
-    const hasScore =
-      Number.isFinite(player.scoreChange);
+      const hasScore =
+        Number.isFinite(
+          player.scoreChange
+        );
 
-    const gainPrefix =
-      hasScore && player.scoreChange > 0
-        ? "+"
-        : "";
-
-    row.append(
-      createTextCell(
-        `#${index + 1}`,
-        "place-cell"
-      ),
-
-      createPlayerCell(player),
-
-      createTextCell(
-        player.startRank ||
-          "Locked at start"
-      ),
-
-      createTextCell(
-        player.currentRank ||
-          "Unranked"
-      ),
-
-      createTextCell(
-        hasScore
-          ? `${gainPrefix}${player.scoreChange}`
-          : "—",
-
+      const gainPrefix =
         hasScore &&
-          player.scoreChange >= 0
-          ? "score-positive"
-          : "score-negative"
-      ),
+        player.scoreChange > 0
+          ? "+"
+          : "";
 
-      createTextCell(result)
-    );
+      const scoreClass =
+        !hasScore
+          ? ""
+          : player.scoreChange >= 0
+            ? "score-positive"
+            : "score-negative";
 
-    leaderboardBody.append(row);
-  });
+      row.append(
+        createTextCell(
+          `#${index + 1}`,
+          "place-cell"
+        ),
+
+        createPlayerCell(player),
+
+        createTextCell(
+          player.startRank ||
+            "Locked at start"
+        ),
+
+        createTextCell(
+          player.currentRank ||
+            "Unranked"
+        ),
+
+        createTextCell(
+          hasScore
+            ? `${gainPrefix}${player.scoreChange}`
+            : "—",
+          scoreClass
+        ),
+
+        createTextCell(result)
+      );
+
+      leaderboardBody.append(row);
+    }
+  );
 }
 
 function formatLeagueRank(player) {
@@ -446,11 +682,15 @@ function formatLeagueRank(player) {
 
   const tier =
     player.tier.charAt(0) +
-    player.tier.slice(1).toLowerCase();
+    player.tier
+      .slice(1)
+      .toLowerCase();
+
+  const division =
+    player.division || "";
 
   return (
-    `${tier} ` +
-    `${player.division || ""}, ` +
+    `${tier} ${division}, ` +
     `${player.leaguePoints ?? 0} LP`
   ).trim();
 }
@@ -458,16 +698,62 @@ function formatLeagueRank(player) {
 function mapLiveLeagueParticipants(
   participants
 ) {
-  return participants.map((player) => ({
-    displayName: player.player,
-    account: player.riotId,
-    startRank: "Locked at event start",
-    currentRank: formatLeagueRank(player),
-    scoreChange: null,
-    wins: player.wins,
-    losses: player.losses,
-    draws: 0,
-  }));
+  return participants
+    .map((player) => ({
+      displayName: player.player,
+      account: player.riotId,
+
+      startRank:
+        player.startSnapshotId
+          ? formatLeagueRank({
+              tier:
+                player.startTier,
+              division:
+                player.startDivision,
+              leaguePoints:
+                player.startLeaguePoints,
+            })
+          : "Start rank unavailable",
+
+      currentRank:
+        formatLeagueRank(player),
+
+      scoreChange:
+        Number.isFinite(
+          player.scoreChange
+        )
+          ? player.scoreChange
+          : null,
+
+      wins: Number(
+        player.wins || 0
+      ),
+
+      losses: Number(
+        player.losses || 0
+      ),
+
+      draws: Number(
+        player.draws || 0
+      ),
+    }))
+    .sort((left, right) => {
+      const leftGain =
+        Number.isFinite(
+          left.scoreChange
+        )
+          ? left.scoreChange
+          : Number.NEGATIVE_INFINITY;
+
+      const rightGain =
+        Number.isFinite(
+          right.scoreChange
+        )
+          ? right.scoreChange
+          : Number.NEGATIVE_INFINITY;
+
+      return rightGain - leftGain;
+    });
 }
 
 async function loadLiveLeagueLeaderboard() {
@@ -487,25 +773,30 @@ async function loadLiveLeagueLeaderboard() {
 
     if (!response.ok) {
       throw new Error(
-        "League leaderboard request failed"
+        "Leaderboard request failed"
       );
     }
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
     liveLeagueParticipants =
       mapLiveLeagueParticipants(
         data.participants || []
       );
 
-    if (selectedGame === "league") {
+    if (
+      selectedGame === "league"
+    ) {
       renderLeaderboardRows(
         liveLeagueParticipants,
         "league"
       );
     }
   } catch (error) {
-    if (selectedGame === "league") {
+    if (
+      selectedGame === "league"
+    ) {
       leaderboardBody.replaceChildren();
 
       createLeaderboardEmptyRow(
@@ -515,25 +806,73 @@ async function loadLiveLeagueLeaderboard() {
   }
 }
 
+function formatValorantRank(
+  tierName,
+  rr
+) {
+  return tierName
+    ? `${tierName}, ${rr ?? 0} RR`
+    : "Unranked";
+}
+
 function mapLiveValorantParticipants(
   participants
 ) {
-  return participants.map((player) => ({
-    displayName: player.player,
-    account: player.riotId,
-    startRank: "Locked at event start",
+  return participants
+    .map((player) => ({
+      displayName: player.player,
+      account: player.riotId,
 
-    currentRank: player.tierName
-      ? `${player.tierName}, ${
-          player.rr ?? 0
-        } RR`
-      : "Unranked",
+      startRank:
+        player.startSnapshotId
+          ? formatValorantRank(
+              player.startTierName,
+              player.startRr
+            )
+          : "Start rank unavailable",
 
-    scoreChange: null,
-    wins: player.wins,
-    losses: player.losses,
-    draws: player.draws,
-  }));
+      currentRank:
+        formatValorantRank(
+          player.tierName,
+          player.rr
+        ),
+
+      scoreChange:
+        Number.isFinite(
+          player.scoreChange
+        )
+          ? player.scoreChange
+          : null,
+
+      wins: Number(
+        player.wins || 0
+      ),
+
+      losses: Number(
+        player.losses || 0
+      ),
+
+      draws: Number(
+        player.draws || 0
+      ),
+    }))
+    .sort((left, right) => {
+      const leftGain =
+        Number.isFinite(
+          left.scoreChange
+        )
+          ? left.scoreChange
+          : Number.NEGATIVE_INFINITY;
+
+      const rightGain =
+        Number.isFinite(
+          right.scoreChange
+        )
+          ? right.scoreChange
+          : Number.NEGATIVE_INFINITY;
+
+      return rightGain - leftGain;
+    });
 }
 
 async function loadLiveValorantLeaderboard() {
@@ -557,21 +896,26 @@ async function loadLiveValorantLeaderboard() {
       );
     }
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
     liveValorantParticipants =
       mapLiveValorantParticipants(
         data.participants || []
       );
 
-    if (selectedGame === "valorant") {
+    if (
+      selectedGame === "valorant"
+    ) {
       renderLeaderboardRows(
         liveValorantParticipants,
         "valorant"
       );
     }
   } catch (error) {
-    if (selectedGame === "valorant") {
+    if (
+      selectedGame === "valorant"
+    ) {
       leaderboardBody.replaceChildren();
 
       createLeaderboardEmptyRow(
@@ -586,15 +930,16 @@ function renderLeaderboard(game) {
 
   const gameDetails = {
     league: {
-      label: "League of Legends",
-      participants: liveLeagueParticipants,
-      loader: loadLiveLeagueLeaderboard,
+      label:
+        "League of Legends",
+      participants:
+        liveLeagueParticipants,
     },
 
     valorant: {
       label: "Valorant",
-      participants: liveValorantParticipants,
-      loader: loadLiveValorantLeaderboard,
+      participants:
+        liveValorantParticipants,
     },
   };
 
@@ -620,8 +965,19 @@ function renderLeaderboard(game) {
     );
   });
 
-  if (!currentGame.participants) {
-    currentGame.loader();
+  if (
+    game === "league" &&
+    !currentGame.participants
+  ) {
+    loadLiveLeagueLeaderboard();
+    return;
+  }
+
+  if (
+    game === "valorant" &&
+    !currentGame.participants
+  ) {
+    loadLiveValorantLeaderboard();
     return;
   }
 
@@ -670,6 +1026,7 @@ function updateOpenEventState(
 
 function showEvent(event) {
   openEvent = event;
+
   lastFocusedElement =
     document.activeElement;
 
@@ -854,7 +1211,8 @@ const linkedEvent =
 
 if (
   linkedEvent &&
-  getPhase(linkedEvent) !== "archived"
+  getPhase(linkedEvent) !==
+    "archived"
 ) {
   showEvent(linkedEvent);
 }
